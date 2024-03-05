@@ -1,20 +1,53 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AJAX Project</title>
-  <link rel="icon" href="images/favicon.ico">
-  <link rel="stylesheet" href="css/reset.css">
-  <link rel="stylesheet" href="css/layout.css">
-  <link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
-  <header>
-  </header>
-  <main>
-  </main>
-  <script src="js/data.js"></script>
-  <script src="js/main.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Front-End Project</title>
+    <link rel="icon" href="images/favicon.ico" />
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="icon" href="images/favicon.ico" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+  </head>
+  <body>
+    <header>
+      <form>
+        <div class="row flex-header">
+          <div class="col-third">
+            <div class="input-wrapper">
+              <i class="fa-solid fa-filter fa-lg"></i>
+              <input
+                type="text"
+                name="filter-bar"
+                id="filter-bar"
+                placeholder="Filter by genre" />
+            </div>
+          </div>
+          <div class="col-third">
+            <h1 class="header">Home</h1>
+          </div>
+          <div class="col-third">
+            <div class="input-wrapper">
+              <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+              <input
+                type="text"
+                name="search-bar"
+                id="search-bar"
+                placeholder="Search by name" />
+            </div>
+          </div>
+        </div>
+      </form>
+    </header>
+    <main></main>
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+  </body>
 </html>

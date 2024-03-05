@@ -1,5 +1,6 @@
+'use strict';
 /* exported data */
-async function getGames(): Promise<void> {
+async function getGames() {
   try {
     const response = await fetch(
       'https://api.rawg.io/api/games?key=721b55f2e5094e67aea26d3b8bc35d43',
@@ -11,10 +12,8 @@ async function getGames(): Promise<void> {
     console.error(error);
   }
 }
-
 getGames();
-
-async function getGameGenres(): Promise<void> {
+async function getGameGenres() {
   try {
     const response = await fetch(
       'https://api.rawg.io/api/genres?key=721b55f2e5094e67aea26d3b8bc35d43',
@@ -26,5 +25,4 @@ async function getGameGenres(): Promise<void> {
     console.error(error);
   }
 }
-
 getGameGenres();

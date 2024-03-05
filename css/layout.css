@@ -1,0 +1,14 @@
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.flex-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.col-third {
+  flex-basis: calc(100% / 3);
+}
