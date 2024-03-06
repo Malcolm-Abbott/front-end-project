@@ -46,14 +46,17 @@ const $genres = document.querySelector(
 ) as HTMLDivElement;
 
 function viewSwap(view: 'home' | 'genres'): void {
+  const $header = document.querySelector('.header') as HTMLHeadingElement;
   if (view === $home.dataset.view) {
     $home.classList.remove('hidden');
     $genres.classList.add('hidden');
     data.view = 'home';
+    $header.textContent = 'Home';
   } else {
     $genres.classList.remove('hidden');
     $home.classList.add('hidden');
     data.view = 'genres';
+    $header.textContent = 'Genres';
   }
 }
 

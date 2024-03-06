@@ -35,14 +35,17 @@ $row?.addEventListener('click', async (event) => {
 const $home = document.querySelector('div[data-view="home"]');
 const $genres = document.querySelector('div[data-view="genres"]');
 function viewSwap(view) {
+  const $header = document.querySelector('.header');
   if (view === $home.dataset.view) {
     $home.classList.remove('hidden');
     $genres.classList.add('hidden');
     data.view = 'home';
+    $header.textContent = 'Home';
   } else {
     $genres.classList.remove('hidden');
     $home.classList.add('hidden');
     data.view = 'genres';
+    $header.textContent = 'Genres';
   }
 }
 async function getGenres(genres) {
