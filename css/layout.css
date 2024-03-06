@@ -12,3 +12,11 @@
 .col-third {
   flex-basis: calc(100% / 3);
 }
+
+.col-full {
+  flex-basis: 100%;
+}
+
+.col-six {
+  flex-basis: calc(100% / 6);
+}

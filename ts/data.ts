@@ -1,30 +1,9 @@
-/* exported data */
-async function getGames(): Promise<void> {
-  try {
-    const response = await fetch(
-      'https://api.rawg.io/api/games?key=721b55f2e5094e67aea26d3b8bc35d43',
-    );
-    if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
-    const data = await response.json();
-    console.log('game data:', data.results);
-  } catch (error) {
-    console.error(error);
-  }
+interface Data {
+  view: 'home' | 'genres';
 }
 
-getGames();
+const data: Data = {
+  view: 'home',
+};
 
-async function getGameGenres(): Promise<void> {
-  try {
-    const response = await fetch(
-      'https://api.rawg.io/api/genres?key=721b55f2e5094e67aea26d3b8bc35d43',
-    );
-    if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
-    const data = await response.json();
-    console.log('genre data:', data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-getGameGenres();
+console.log('data:', data);

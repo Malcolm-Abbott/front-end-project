@@ -1,6 +1,7 @@
 body {
   font-family: Arial, sans-serif;
   background-color: rgb(17, 52, 106);
+  color: #fff;
 }
 
 header {
@@ -34,4 +35,45 @@ input {
 
 input::placeholder {
   color: rgb(17, 52, 106);
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.main-header-1,
+.main-header-2,
+.genres-header {
+  text-align: center;
+  margin: 2rem 0;
+}
+
+img {
+  width: 100%;
+}
+
+.game-img-wrapper {
+  display: flex;
+  min-height: 6rem;
+  margin: 0 1rem;
+}
+
+.game-img-wrapper > img {
+  border-radius: 100%;
+  cursor: pointer;
+}
+
+.game-img-text {
+  text-align: center;
+}
+
+@media (width < 795px) {
+  .col-six {
+    flex-basis: calc(100% / 3);
+  }
+
+  .container {
+    max-width: 400px;
+  }
 }
