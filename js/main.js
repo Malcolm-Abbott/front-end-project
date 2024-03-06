@@ -1,33 +1,39 @@
 'use strict';
 const $row = document.querySelector('.flex-main');
+const $genresHeader = document.querySelector('.genres-header');
+const $flexGenres = document.querySelector('.flex-genres');
 $row?.addEventListener('click', async (event) => {
   const $eventTarget = event.target;
   if (!$eventTarget) throw new Error('No event target!');
   viewSwap('genres');
-  const $genresHeader = document.querySelector('.genres-header');
   switch ($eventTarget.className) {
     case 'shooter':
       $genresHeader.textContent = 'Shooters';
+      data.genres = 'shooter';
       break;
     case 'racing':
       $genresHeader.textContent = 'Racing';
+      data.genres = 'racing';
       break;
     case 'sports':
       $genresHeader.textContent = 'Sports';
+      data.genres = 'sports';
       break;
     case 'role-playing-games-rpg':
       $genresHeader.textContent = 'RPG';
+      data.genres = 'role-playing-games-rpg';
       break;
     case 'strategy':
       $genresHeader.textContent = 'Strategy';
+      data.genres = 'strategy';
       break;
     case 'simulation':
       $genresHeader.textContent = 'Simulation';
+      data.genres = 'simulation';
       break;
   }
   getGenres($eventTarget.className);
   const genresResults = await getGenres($eventTarget.className);
-  const $flexGenres = document.querySelector('.flex-genres');
   genresResults.forEach((result) => {
     $flexGenres.prepend(renderGame(result));
   });
@@ -41,6 +47,7 @@ function viewSwap(view) {
     $genres.classList.add('hidden');
     data.view = 'home';
     $header.textContent = 'Home';
+    data.genres = null;
   } else {
     $genres.classList.remove('hidden');
     $home.classList.add('hidden');
@@ -78,3 +85,36 @@ function renderGame(game) {
   $gameImgText.append($p);
   return $colSix;
 }
+const $iconHome = document.querySelector('.fa-house');
+$iconHome.addEventListener('click', () => {
+  viewSwap('home');
+});
+document.addEventListener('DOMContentLoaded', async () => {
+  if (data.genres !== null) {
+    viewSwap('genres');
+    switch (data.genres) {
+      case 'shooter':
+        $genresHeader.textContent = 'Shooters';
+        break;
+      case 'racing':
+        $genresHeader.textContent = 'Racing';
+        break;
+      case 'sports':
+        $genresHeader.textContent = 'Sports';
+        break;
+      case 'role-playing-games-rpg':
+        $genresHeader.textContent = 'RPG';
+        break;
+      case 'strategy':
+        $genresHeader.textContent = 'Strategy';
+        break;
+      case 'simulation':
+        $genresHeader.textContent = 'Simulation';
+        break;
+    }
+    const genresResults = await getGenres(data.genres);
+    genresResults.forEach((result) => {
+      $flexGenres.prepend(renderGame(result));
+    });
+  }
+});

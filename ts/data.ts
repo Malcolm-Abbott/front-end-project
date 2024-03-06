@@ -1,9 +1,18 @@
 interface Data {
   view: 'home' | 'genres';
+  genres: string | null;
 }
 
-const data: Data = {
+let data: Data = {
   view: 'home',
+  genres: null,
 };
 
-console.log('data:', data);
+window.addEventListener('beforeunload', (): void => {
+  const dataJSON = JSON.stringify(data);
+  localStorage.setItem('game-repo-data', dataJSON);
+});
+
+const previousDataJSON = localStorage.getItem('game-repo-data');
+
+if (previousDataJSON) data = JSON.parse(previousDataJSON);

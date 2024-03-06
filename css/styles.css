@@ -10,10 +10,22 @@ header {
   padding: 1rem 0;
 }
 
+.header-heading-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .header {
   margin: 0;
   color: #fff;
   text-align: center;
+  display: inline;
+}
+
+.fa-house {
+  margin-left: 0.5rem;
+  cursor: pointer;
 }
 
 .input-wrapper {

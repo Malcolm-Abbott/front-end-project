@@ -1,5 +1,11 @@
 'use strict';
-const data = {
+let data = {
   view: 'home',
+  genres: null,
 };
-console.log('data:', data);
+window.addEventListener('beforeunload', () => {
+  const dataJSON = JSON.stringify(data);
+  localStorage.setItem('game-repo-data', dataJSON);
+});
+const previousDataJSON = localStorage.getItem('game-repo-data');
+if (previousDataJSON) data = JSON.parse(previousDataJSON);
