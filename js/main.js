@@ -70,7 +70,7 @@ async function getGenres(genres) {
 }
 function renderGame(game) {
   const $colSix = document.createElement('div');
-  $colSix.className = 'col-six';
+  $colSix.className = 'col-six col-six-genres';
   const $gameImgWrapper = document.createElement('div');
   $gameImgWrapper.className = 'game-img-wrapper';
   $colSix.append($gameImgWrapper);
@@ -87,6 +87,10 @@ function renderGame(game) {
 }
 const $iconHome = document.querySelector('.fa-house');
 $iconHome.addEventListener('click', () => {
+  const $colSixGenres = document.querySelectorAll('.col-six-genres');
+  $colSixGenres.forEach((element) => {
+    element.remove();
+  });
   viewSwap('home');
 });
 document.addEventListener('DOMContentLoaded', async () => {

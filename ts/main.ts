@@ -83,7 +83,7 @@ async function getGenres(genres: string): Promise<any> {
 
 function renderGame(game: Values): HTMLDivElement {
   const $colSix = document.createElement('div') as HTMLDivElement;
-  $colSix.className = 'col-six';
+  $colSix.className = 'col-six col-six-genres';
 
   const $gameImgWrapper = document.createElement('div') as HTMLDivElement;
   $gameImgWrapper.className = 'game-img-wrapper';
@@ -107,6 +107,10 @@ function renderGame(game: Values): HTMLDivElement {
 const $iconHome = document.querySelector('.fa-house') as HTMLElement;
 
 $iconHome.addEventListener('click', () => {
+  const $colSixGenres = document.querySelectorAll('.col-six-genres');
+  $colSixGenres.forEach((element) => {
+    element.remove();
+  });
   viewSwap('home');
 });
 
