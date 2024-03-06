@@ -1,20 +1,195 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AJAX Project</title>
-  <link rel="icon" href="images/favicon.ico">
-  <link rel="stylesheet" href="css/reset.css">
-  <link rel="stylesheet" href="css/layout.css">
-  <link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
-  <header>
-  </header>
-  <main>
-  </main>
-  <script src="js/data.js"></script>
-  <script src="js/main.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Front-End Project</title>
+    <link rel="icon" href="images/favicon.ico" />
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="icon" href="images/favicon.ico" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+  </head>
+  <body>
+    <header>
+      <form>
+        <div class="row flex-header">
+          <div class="col-third">
+            <div class="input-wrapper">
+              <i class="fa-solid fa-filter fa-lg"></i>
+              <input
+                type="text"
+                name="filter-bar"
+                id="filter-bar"
+                placeholder="Filter by genre" />
+            </div>
+          </div>
+          <div class="col-third">
+            <div class="header-heading-wrapper">
+              <h1 class="header">Home</h1>
+              <i class="fa-solid fa-house fa-lg"></i>
+            </div>
+          </div>
+          <div class="col-third">
+            <div class="input-wrapper">
+              <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+              <input
+                type="text"
+                name="search-bar"
+                id="search-bar"
+                placeholder="Search by name" />
+            </div>
+          </div>
+        </div>
+      </form>
+    </header>
+    <main>
+      <div data-view="home">
+        <div class="container">
+          <div class="row flex-main">
+            <div class="col-full">
+              <h1 class="main-header-1">Featured Genres</h1>
+            </div>
+            <div class="col-six">
+              <div class="game-img-wrapper">
+                <img
+                  src="https://media.rawg.io/media/games/998/9980c4296f311d8bcc5b451ca51e4fe1.jpg"
+                  class="shooter" />
+              </div>
+              <div class="game-img-text">
+                <p>Shooters</p>
+              </div>
+            </div>
+            <div class="col-six">
+              <div class="game-img-wrapper">
+                <img
+                  src="https://media.rawg.io/media/games/786/7863e587bac630de82fca50d799236a9.jpg"
+                  class="racing" />
+              </div>
+              <div class="game-img-text">
+                <p>Racing</p>
+              </div>
+            </div>
+            <div class="col-six">
+              <div class="game-img-wrapper">
+                <img
+                  src="https://media.rawg.io/media/games/cb4/cb487ab3c54b81cb685388bab42ec848.jpeg"
+                  class="sports" />
+              </div>
+              <div class="game-img-text">
+                <p>Sports</p>
+              </div>
+            </div>
+            <div class="col-six">
+              <div class="game-img-wrapper">
+                <img
+                  src="https://media.rawg.io/media/games/d0f/d0f91fe1d92332147e5db74e207cfc7a.jpg"
+                  class="role-playing-games-rpg" />
+              </div>
+              <div class="game-img-text">
+                <p>RPG</p>
+              </div>
+            </div>
+            <div class="col-six">
+              <div class="game-img-wrapper">
+                <img
+                  src="https://media.rawg.io/media/games/997/997ab4d67e96fb20a4092383477d4463.jpg"
+                  class="strategy" />
+              </div>
+              <div class="game-img-text">
+                <p>Strategy</p>
+              </div>
+            </div>
+            <div class="col-six">
+              <div class="game-img-wrapper">
+                <img
+                  src="https://media.rawg.io/media/games/b4e/b4e4c73d5aa4ec66bbf75375c4847a2b.jpg"
+                  class="simulation" />
+              </div>
+              <div class="game-img-text">
+                <p>Simulation</p>
+              </div>
+            </div>
+            <div class="col-full">
+              <div class="main-header-2">
+                <h1>Featured Titles</h1>
+              </div>
+            </div>
+            <div class="col-six">
+              <div class="game-img-wrapper">
+                <img
+                  src="https://media.rawg.io/media/games/45b/45b57ed59de4b84effd8f6bc4b7bf515.jpg" />
+              </div>
+              <div class="game-img-text">
+                <p>Battlefield V</p>
+              </div>
+            </div>
+            <div class="col-six">
+              <div class="game-img-wrapper">
+                <img
+                  src="https://media.rawg.io/media/games/8cc/8cce7c0e99dcc43d66c8efd42f9d03e3.jpg" />
+              </div>
+              <div class="game-img-text">
+                <p>Rocket League</p>
+              </div>
+            </div>
+            <div class="col-six">
+              <div class="game-img-wrapper">
+                <img
+                  src="https://media.rawg.io/media/games/031/031af38e6a558d4cd4bf91ee80904cdf.jpg" />
+              </div>
+              <div class="game-img-text">
+                <p>FIFA 20</p>
+              </div>
+            </div>
+            <div class="col-six">
+              <div class="game-img-wrapper">
+                <img
+                  src="https://media.rawg.io/media/games/3f2/3f207dcc7931598567a90bc779a95cf8.jpg" />
+              </div>
+              <div class="game-img-text">
+                <p>Diablo II: Resurrected</p>
+              </div>
+            </div>
+            <div class="col-six">
+              <div class="game-img-wrapper">
+                <img
+                  src="https://media.rawg.io/media/games/095/0953bf01cd4e4dd204aba85489ac9868.jpg" />
+              </div>
+              <div class="game-img-text">
+                <p>ARK: Survival Of The Fittest</p>
+              </div>
+            </div>
+            <div class="col-six">
+              <div class="game-img-wrapper">
+                <img
+                  src="https://media.rawg.io/media/games/651/651ae84f2d5e36206aad90976a453329.jpg" />
+              </div>
+              <div class="game-img-text">
+                <p>Black Desert Online</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-view="genres" class="hidden">
+        <div class="container">
+          <div class="row">
+            <div class="col-full">
+              <h1 class="genres-header"></h1>
+            </div>
+          </div>
+          <div class="row flex-genres"></div>
+        </div>
+      </div>
+    </main>
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+  </body>
 </html>
