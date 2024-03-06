@@ -88,4 +88,9 @@ img {
   .container {
     max-width: 400px;
   }
+
+  .fa-solid.fa-filter.fa-lg,
+  .fa-solid.fa-magnifying-glass.fa-lg {
+    display: none;
+  }
 }
