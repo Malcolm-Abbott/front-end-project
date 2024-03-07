@@ -143,3 +143,37 @@ document.addEventListener('DOMContentLoaded', async (): Promise<void> => {
     });
   }
 });
+
+// const string1 = 'hey there how are you';
+// const array1 = string1.split(' ');
+// console.log('array1.length:', array1.length);
+// let string2 = '';
+// let i = 0;
+// array1.forEach((element) => {
+//   if (i < array1.length - 1) {
+//     string2 += element + '-';
+//   } else {
+//     string2 += element;
+//   }
+//   i++;
+// })
+// console.log('string2:', string2);
+
+const $searchBar = document.querySelector('#search-bar') as HTMLInputElement;
+
+$searchBar.addEventListener('input', () => {
+  searchGame($searchBar.value);
+});
+
+async function searchGame(game: string | void): Promise<void> {
+  try {
+    const response = await fetch(
+      `https://api.rawg.io/api/games/${game}?key=721b55f2e5094e67aea26d3b8bc35d43`,
+    );
+    if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
+    const data = await response.json();
+    console.log('data:', data);
+  } catch (error) {
+    console.error(error);
+  }
+}
