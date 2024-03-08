@@ -1,5 +1,5 @@
 interface Data {
-  view: 'home' | 'genres';
+  view: 'home' | 'genres' | 'game';
   genres: string | null;
 }
 

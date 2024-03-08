@@ -1,6 +1,8 @@
 interface Values {
   background_image: string;
   name: string;
+  description_raw: string;
+  website: string;
 }
 
 const $row = document.querySelector('.flex-main');
@@ -52,20 +54,44 @@ const $home = document.querySelector('div[data-view="home"]') as HTMLDivElement;
 const $genres = document.querySelector(
   'div[data-view="genres"]',
 ) as HTMLDivElement;
+const $game = document.querySelector('div[data-view="game"]') as HTMLDivElement;
 
-function viewSwap(view: 'home' | 'genres'): void {
+function viewSwap(view: 'home' | 'genres' | 'game'): void {
   const $header = document.querySelector('.header') as HTMLHeadingElement;
-  if (view === $home.dataset.view) {
-    $home.classList.remove('hidden');
-    $genres.classList.add('hidden');
-    data.view = 'home';
-    $header.textContent = 'Home';
-    data.genres = null;
-  } else {
-    $genres.classList.remove('hidden');
-    $home.classList.add('hidden');
-    data.view = 'genres';
-    $header.textContent = 'Genres';
+  // if (view === $home.dataset.view) {
+  //   $home.classList.remove('hidden');
+  //   $genres.classList.add('hidden');
+  //   data.view = 'home';
+  //   $header.textContent = 'Home';
+  //   data.genres = null;
+  // } else if (view === $genres.dataset.view) {
+  //   $genres.classList.remove('hidden');
+  //   $home.classList.add('hidden');
+  //   data.view = 'genres';
+  //   $header.textContent = 'Genres';
+  // }
+  switch (view) {
+    case $home.dataset.view:
+      $home.classList.remove('hidden');
+      $genres.className = 'hidden';
+      $game.className = 'hidden';
+      data.view = 'home';
+      $header.textContent = 'Home';
+      data.genres = null;
+      break;
+    case $genres.dataset.view:
+      $genres.classList.remove('hidden');
+      $home.className = 'hidden';
+      data.view = 'genres';
+      $header.textContent = 'Genres';
+      break;
+    case $game.dataset.view:
+      $game.classList.remove('hidden');
+      $home.className = 'hidden';
+      $genres.className = 'hidden';
+      data.view = 'game';
+      data.genres = null;
+      break;
   }
 }
 
@@ -108,7 +134,7 @@ function renderGame(game: Values): HTMLDivElement {
 
 const $iconHome = document.querySelector('.fa-house') as HTMLElement;
 
-$iconHome.addEventListener('click', () => {
+$iconHome.addEventListener('click', (): void => {
   const $colSixGenres = document.querySelectorAll('.col-six-genres');
   $colSixGenres.forEach((element) => {
     element.remove();
@@ -216,8 +242,28 @@ async function searchGameByInput(game: string): Promise<any> {
       data.view = 'home';
     }
     const result = await response.json();
+    console.log('result:', result);
     return result;
   } catch (error) {
     console.error(error);
   }
 }
+
+// function renderGamePage(game: Values): HTMLDivElement {
+//   const $row = document.createElement('div') as HTMLDivElement;
+//   $row.className = 'row flex-details';
+
+//   const $colOneThird = document.createElement('div') as HTMLDivElement;
+//   $colOneThird.className = 'col-one-third';
+//   $row.append($colOneThird);
+
+//   const $img = document.createElement('img') as HTMLImageElement;
+//   $img.setAttribute('src', game.background_image);
+//   $colOneThird.append($img);
+
+//   const $colTwoThirds = document.createElement('div') as HTMLDivElement;
+//   $colTwoThirds.className = 'col-two-thirds';
+//   $row.append($colTwoThirds);
+
+//   return $colOneThird;
+// }

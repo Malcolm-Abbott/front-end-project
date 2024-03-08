@@ -42,19 +42,43 @@ $row?.addEventListener('click', async (event) => {
 });
 const $home = document.querySelector('div[data-view="home"]');
 const $genres = document.querySelector('div[data-view="genres"]');
+const $game = document.querySelector('div[data-view="game"]');
 function viewSwap(view) {
   const $header = document.querySelector('.header');
-  if (view === $home.dataset.view) {
-    $home.classList.remove('hidden');
-    $genres.classList.add('hidden');
-    data.view = 'home';
-    $header.textContent = 'Home';
-    data.genres = null;
-  } else {
-    $genres.classList.remove('hidden');
-    $home.classList.add('hidden');
-    data.view = 'genres';
-    $header.textContent = 'Genres';
+  // if (view === $home.dataset.view) {
+  //   $home.classList.remove('hidden');
+  //   $genres.classList.add('hidden');
+  //   data.view = 'home';
+  //   $header.textContent = 'Home';
+  //   data.genres = null;
+  // } else if (view === $genres.dataset.view) {
+  //   $genres.classList.remove('hidden');
+  //   $home.classList.add('hidden');
+  //   data.view = 'genres';
+  //   $header.textContent = 'Genres';
+  // }
+  switch (view) {
+    case $home.dataset.view:
+      $home.classList.remove('hidden');
+      $genres.className = 'hidden';
+      $game.className = 'hidden';
+      data.view = 'home';
+      $header.textContent = 'Home';
+      data.genres = null;
+      break;
+    case $genres.dataset.view:
+      $genres.classList.remove('hidden');
+      $home.className = 'hidden';
+      data.view = 'genres';
+      $header.textContent = 'Genres';
+      break;
+    case $game.dataset.view:
+      $game.classList.remove('hidden');
+      $home.className = 'hidden';
+      $genres.className = 'hidden';
+      data.view = 'game';
+      data.genres = null;
+      break;
   }
 }
 async function getGenres(genres) {
@@ -187,8 +211,23 @@ async function searchGameByInput(game) {
       data.view = 'home';
     }
     const result = await response.json();
+    console.log('result:', result);
     return result;
   } catch (error) {
     console.error(error);
   }
+}
+function renderGamePage(game) {
+  const $row = document.createElement('div');
+  $row.className = 'row flex-details';
+  const $colOneThird = document.createElement('div');
+  $colOneThird.className = 'col-one-third';
+  $row.append($colOneThird);
+  const $img = document.createElement('img');
+  $img.setAttribute('src', game.background_image);
+  $colOneThird.append($img);
+  const $colTwoThirds = document.createElement('div');
+  $colTwoThirds.className = 'col-two-thirds';
+  $row.append($colTwoThirds);
+  return $colOneThird;
 }
