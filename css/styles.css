@@ -94,3 +94,33 @@ img {
     display: none;
   }
 }
+
+.game-description-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.details-img-wrapper {
+  border: 2px solid red;
+  height: 100%;
+}
+
+.col-one-third > img {
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+.description-heading {
+  text-align: center;
+}
+
+.description-paragraph {
+  padding: 0 1.5rem;
+}
+
+.flex-official {
+  display: flex;
+  align-items: center;
+}

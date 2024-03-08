@@ -165,18 +165,18 @@ $searchIcon?.addEventListener('click', async () => {
     $flexGenres.prepend(renderGame(gameResult));
   }
 });
-async function searchGame(game) {
-  try {
-    const response = await fetch(
-      `https://api.rawg.io/api/games/${game}?key=721b55f2e5094e67aea26d3b8bc35d43`,
-    );
-    if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
-    const result = await response.json();
-    return result;
-  } catch (error) {
-    console.error(error);
-  }
-}
+// async function searchGame(game: string | void): Promise<any> {
+//   try {
+//     const response = await fetch(
+//       `https://api.rawg.io/api/games/${game}?key=721b55f2e5094e67aea26d3b8bc35d43`,
+//     );
+//     if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
+//     const result = await response.json();
+//     return result;
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
 async function searchGameByInput(game) {
   try {
     const response = await fetch(
