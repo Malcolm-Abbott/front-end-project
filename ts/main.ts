@@ -265,5 +265,29 @@ async function searchGameByInput(game: string): Promise<any> {
 //   $colTwoThirds.className = 'col-two-thirds';
 //   $row.append($colTwoThirds);
 
-//   return $colOneThird;
+//   const $descriptionHeading = document.createElement('h1') as HTMLHeadingElement;
+//   $descriptionHeading.className = "description-heading";
+//   $colTwoThirds.append($descriptionHeading);
+
+//   const $descriptionParagraph = document.createElement('p') as HTMLParagraphElement;
+//   $descriptionParagraph.className = "description-paragraph";
+//   $colTwoThirds.append($descriptionParagraph);
+
+//   const $flexOfficial = document.createElement('div') as HTMLDivElement;
+//   $flexOfficial.className = 'col-one-third flex-official';
+//   $row.append($flexOfficial);
+
+//   const $colFull = document.createElement('div') as HTMLDivElement;
+//   $colFull.className = 'col-full';
+//   $flexOfficial.append($colFull);
+
+//   const $officialSiteHeading = document.createElement('h2') as HTMLHeadingElement;
+//   $officialSiteHeading.className = 'official-site-heading';
+//   $colFull.append($officialSiteHeading);
+
+//   const $officialSiteLink = document.createElement('h3') as HTMLHeadingElement;
+//   $officialSiteLink.className = 'official-site-link';
+//   $colFull.append($officialSiteLink);
+
+//   return $row;
 // }

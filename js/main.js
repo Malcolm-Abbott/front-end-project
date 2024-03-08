@@ -229,5 +229,23 @@ function renderGamePage(game) {
   const $colTwoThirds = document.createElement('div');
   $colTwoThirds.className = 'col-two-thirds';
   $row.append($colTwoThirds);
-  return $colOneThird;
+  const $descriptionHeading = document.createElement('h1');
+  $descriptionHeading.className = 'description-heading';
+  $colTwoThirds.append($descriptionHeading);
+  const $descriptionParagraph = document.createElement('p');
+  $descriptionParagraph.className = 'description-paragraph';
+  $colTwoThirds.append($descriptionParagraph);
+  const $flexOfficial = document.createElement('div');
+  $flexOfficial.className = 'col-one-third flex-official';
+  $row.append($flexOfficial);
+  const $colFull = document.createElement('div');
+  $colFull.className = 'col-full';
+  $flexOfficial.append($colFull);
+  const $officialSiteHeading = document.createElement('h2');
+  $officialSiteHeading.className = 'official-site-heading';
+  $colFull.append($officialSiteHeading);
+  const $officialSiteLink = document.createElement('h3');
+  $officialSiteLink.className = 'official-site-link';
+  $colFull.append($officialSiteLink);
+  return $row;
 }
