@@ -2,12 +2,19 @@
 const $row = document.querySelector('.flex-main');
 const $genresHeader = document.querySelector('.genres-header');
 const $flexGenres = document.querySelector('.flex-genres');
+const $gameDescriptionContainer = document.querySelector(
+  '.game-description-container',
+);
+if (!$genresHeader) throw new Error('The $genresHeader query failed');
+if (!$flexGenres) throw new Error('The $flexGenres query failed');
+if (!$gameDescriptionContainer)
+  throw new Error('The $gameDescriptionContainer query failed');
 $row?.addEventListener('click', async (event) => {
   const $eventTarget = event.target;
   if (!$eventTarget) throw new Error('No event target!');
-  if ($eventTarget.matches('img')) {
+  if ($eventTarget.className === 'genres-img') {
     viewSwap('genres');
-    switch ($eventTarget.className) {
+    switch ($eventTarget.id) {
       case 'shooter':
         $genresHeader.textContent = 'Shooters';
         data.genres = 'shooter';
@@ -33,11 +40,21 @@ $row?.addEventListener('click', async (event) => {
         data.genres = 'simulation';
         break;
     }
-    getGenres($eventTarget.className);
-    const genresResults = await getGenres($eventTarget.className);
+    getGenres($eventTarget.id);
+    const genresResults = await getGenres($eventTarget.id);
     genresResults.forEach((result) => {
       $flexGenres.prepend(renderGame(result));
     });
+  } else if ($eventTarget.className === 'game-img') {
+    viewSwap('game');
+    const gameResult = await getGame($eventTarget.id);
+    $gameDescriptionContainer.prepend(renderGamePage(gameResult));
+    const $descriptionParagraph = document.querySelector(
+      '.description-paragraph',
+    );
+    $descriptionParagraph.textContent = gameResult.description_raw;
+    const $officialSiteLink = document.querySelector('.official-site-link');
+    $officialSiteLink.textContent = gameResult.website;
   }
 });
 const $home = document.querySelector('div[data-view="home"]');
@@ -45,20 +62,8 @@ const $genres = document.querySelector('div[data-view="genres"]');
 const $game = document.querySelector('div[data-view="game"]');
 function viewSwap(view) {
   const $header = document.querySelector('.header');
-  // if (view === $home.dataset.view) {
-  //   $home.classList.remove('hidden');
-  //   $genres.classList.add('hidden');
-  //   data.view = 'home';
-  //   $header.textContent = 'Home';
-  //   data.genres = null;
-  // } else if (view === $genres.dataset.view) {
-  //   $genres.classList.remove('hidden');
-  //   $home.classList.add('hidden');
-  //   data.view = 'genres';
-  //   $header.textContent = 'Genres';
-  // }
   switch (view) {
-    case $home.dataset.view:
+    case 'home':
       $home.classList.remove('hidden');
       $genres.className = 'hidden';
       $game.className = 'hidden';
@@ -66,13 +71,13 @@ function viewSwap(view) {
       $header.textContent = 'Home';
       data.genres = null;
       break;
-    case $genres.dataset.view:
+    case 'genres':
       $genres.classList.remove('hidden');
       $home.className = 'hidden';
       data.view = 'genres';
       $header.textContent = 'Genres';
       break;
-    case $game.dataset.view:
+    case 'game':
       $game.classList.remove('hidden');
       $home.className = 'hidden';
       $genres.className = 'hidden';
@@ -113,10 +118,18 @@ function renderGame(game) {
 }
 const $iconHome = document.querySelector('.fa-house');
 $iconHome.addEventListener('click', () => {
-  const $colSixGenres = document.querySelectorAll('.col-six-genres');
-  $colSixGenres.forEach((element) => {
-    element.remove();
-  });
+  switch (data.view) {
+    case 'genres':
+      const $colSixGenres = document.querySelectorAll('.col-six-genres');
+      $colSixGenres.forEach((element) => {
+        element.remove();
+      });
+      break;
+    case 'game':
+      const $flexDetails = document.querySelector('.flex-details');
+      $flexDetails.remove();
+      break;
+  }
   $searchBar.value = '';
   viewSwap('home');
 });
@@ -164,9 +177,20 @@ $searchBar.addEventListener('keydown', async (event) => {
       }
       i++;
     });
-    viewSwap('genres');
+    const $flexDetails = document.querySelector('.flex-details');
+    if ($flexDetails) {
+      $flexDetails.remove();
+    }
+    viewSwap('game');
+    $searchBar.value = '';
     const gameResult = await searchGameByInput(searchValue);
-    $flexGenres.prepend(renderGame(gameResult));
+    $gameDescriptionContainer.prepend(renderGamePage(gameResult));
+    const $descriptionParagraph = document.querySelector(
+      '.description-paragraph',
+    );
+    $descriptionParagraph.textContent = gameResult.description_raw;
+    const $officialSiteLink = document.querySelector('.official-site-link');
+    $officialSiteLink.textContent = gameResult.website;
   }
 });
 const $searchIcon = document.querySelector('.fa-magnifying-glass');
@@ -184,23 +208,34 @@ $searchIcon?.addEventListener('click', async () => {
       }
       i++;
     });
-    viewSwap('genres');
+    const $flexDetails = document.querySelector('.flex-details');
+    if ($flexDetails) {
+      $flexDetails.remove();
+    }
+    viewSwap('game');
+    $searchBar.value = '';
     const gameResult = await searchGameByInput(searchValue);
-    $flexGenres.prepend(renderGame(gameResult));
+    $gameDescriptionContainer.prepend(renderGamePage(gameResult));
+    const $descriptionParagraph = document.querySelector(
+      '.description-paragraph',
+    );
+    $descriptionParagraph.textContent = gameResult.description_raw;
+    const $officialSiteLink = document.querySelector('.official-site-link');
+    $officialSiteLink.textContent = gameResult.website;
   }
 });
-// async function searchGame(game: string | void): Promise<any> {
-//   try {
-//     const response = await fetch(
-//       `https://api.rawg.io/api/games/${game}?key=721b55f2e5094e67aea26d3b8bc35d43`,
-//     );
-//     if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
-//     const result = await response.json();
-//     return result;
-//   } catch (error) {
-//     console.error(error);
-//   }
-// }
+async function getGame(game) {
+  try {
+    const response = await fetch(
+      `https://api.rawg.io/api/games/${game}?key=721b55f2e5094e67aea26d3b8bc35d43`,
+    );
+    if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error(error);
+  }
+}
 async function searchGameByInput(game) {
   try {
     const response = await fetch(
@@ -211,7 +246,6 @@ async function searchGameByInput(game) {
       data.view = 'home';
     }
     const result = await response.json();
-    console.log('result:', result);
     return result;
   } catch (error) {
     console.error(error);
@@ -231,6 +265,7 @@ function renderGamePage(game) {
   $row.append($colTwoThirds);
   const $descriptionHeading = document.createElement('h1');
   $descriptionHeading.className = 'description-heading';
+  $descriptionHeading.textContent = 'Description';
   $colTwoThirds.append($descriptionHeading);
   const $descriptionParagraph = document.createElement('p');
   $descriptionParagraph.className = 'description-paragraph';
@@ -243,6 +278,7 @@ function renderGamePage(game) {
   $flexOfficial.append($colFull);
   const $officialSiteHeading = document.createElement('h2');
   $officialSiteHeading.className = 'official-site-heading';
+  $officialSiteHeading.textContent = 'Visit Official Website';
   $colFull.append($officialSiteHeading);
   const $officialSiteLink = document.createElement('h3');
   $officialSiteLink.className = 'official-site-link';
