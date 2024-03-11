@@ -3,9 +3,10 @@ interface Values {
   name: string;
   description_raw: string;
   website: string;
+  slug: string;
 }
 
-const $row = document.querySelector('.flex-main');
+const $row = document.querySelector('.flex-main') as HTMLDivElement;
 const $genresHeader = document.querySelector(
   '.genres-header',
 ) as HTMLHeadingElement;
@@ -58,15 +59,8 @@ $row?.addEventListener('click', async (event: Event) => {
   } else if ($eventTarget.className === 'game-img') {
     viewSwap('game');
     const gameResult = await getGame($eventTarget.id);
+    data.game = $eventTarget.id;
     $gameDescriptionContainer.prepend(renderGamePage(gameResult));
-    const $descriptionParagraph = document.querySelector(
-      '.description-paragraph',
-    ) as HTMLParagraphElement;
-    $descriptionParagraph.textContent = gameResult.description_raw;
-    const $officialSiteLink = document.querySelector(
-      '.official-site-link',
-    ) as HTMLHeadingElement;
-    $officialSiteLink.textContent = gameResult.website;
   }
 });
 
@@ -86,12 +80,14 @@ function viewSwap(view: 'home' | 'genres' | 'game'): void {
       data.view = 'home';
       $header.textContent = 'Home';
       data.genres = null;
+      data.game = null;
       break;
     case 'genres':
       $genres.classList.remove('hidden');
       $home.className = 'hidden';
       data.view = 'genres';
       $header.textContent = 'Genres';
+      data.game = null;
       break;
     case 'game':
       $game.classList.remove('hidden');
@@ -154,7 +150,7 @@ $iconHome.addEventListener('click', (): void => {
       });
       break;
     case 'game':
-      $flexDetails.remove();
+      $flexDetails?.remove();
       break;
   }
   $searchBar.value = '';
@@ -188,6 +184,10 @@ document.addEventListener('DOMContentLoaded', async (): Promise<void> => {
     genresResults.forEach((result: Values) => {
       $flexGenres.prepend(renderGame(result));
     });
+  } else if (data.game !== null) {
+    viewSwap('game');
+    const gameResult = await searchGameByInput(data.game);
+    $gameDescriptionContainer.prepend(renderGamePage(gameResult));
   }
 });
 
@@ -215,14 +215,10 @@ $searchBar.addEventListener('keydown', async (event: any): Promise<void> => {
     $searchBar.value = '';
     const gameResult = await searchGameByInput(searchValue);
     $gameDescriptionContainer.prepend(renderGamePage(gameResult));
-    const $descriptionParagraph = document.querySelector(
-      '.description-paragraph',
-    ) as HTMLParagraphElement;
-    $descriptionParagraph.textContent = gameResult.description_raw;
-    const $officialSiteLink = document.querySelector(
-      '.official-site-link',
-    ) as HTMLHeadingElement;
-    $officialSiteLink.textContent = gameResult.website;
+    const $flexDetails2 = document.querySelector(
+      '.flex-details',
+    ) as HTMLDivElement;
+    data.game = $flexDetails2?.id;
   }
 });
 
@@ -252,14 +248,10 @@ $searchIcon?.addEventListener('click', async (): Promise<void> => {
     $searchBar.value = '';
     const gameResult = await searchGameByInput(searchValue);
     $gameDescriptionContainer.prepend(renderGamePage(gameResult));
-    const $descriptionParagraph = document.querySelector(
-      '.description-paragraph',
-    ) as HTMLParagraphElement;
-    $descriptionParagraph.textContent = gameResult.description_raw;
-    const $officialSiteLink = document.querySelector(
-      '.official-site-link',
-    ) as HTMLHeadingElement;
-    $officialSiteLink.textContent = gameResult.website;
+    const $flexDetails2 = document.querySelector(
+      '.flex-details',
+    ) as HTMLDivElement;
+    data.game = $flexDetails2?.id;
   }
 });
 
@@ -295,6 +287,7 @@ async function searchGameByInput(game: string): Promise<any> {
 function renderGamePage(game: Values): HTMLDivElement {
   const $row = document.createElement('div') as HTMLDivElement;
   $row.className = 'row flex-details';
+  $row.id = game.slug;
 
   const $colOneThird = document.createElement('div') as HTMLDivElement;
   $colOneThird.className = 'col-one-third';
@@ -319,6 +312,7 @@ function renderGamePage(game: Values): HTMLDivElement {
     'p',
   ) as HTMLParagraphElement;
   $descriptionParagraph.className = 'description-paragraph';
+  $descriptionParagraph.textContent = game.description_raw;
   $colTwoThirds.append($descriptionParagraph);
 
   const $flexOfficial = document.createElement('div') as HTMLDivElement;
@@ -336,9 +330,20 @@ function renderGamePage(game: Values): HTMLDivElement {
   $officialSiteHeading.textContent = 'Visit Official Website';
   $colFull.append($officialSiteHeading);
 
-  const $officialSiteLink = document.createElement('h3') as HTMLHeadingElement;
-  $officialSiteLink.className = 'official-site-link';
-  $colFull.append($officialSiteLink);
+  const $officialSiteLinkHeading = document.createElement(
+    'h3',
+  ) as HTMLHeadingElement;
+  $officialSiteLinkHeading.className = 'official-site-link-heading';
+  $colFull.append($officialSiteLinkHeading);
+
+  const $officialSiteLinkAnchor = document.createElement(
+    'a',
+  ) as HTMLAnchorElement;
+  $officialSiteLinkAnchor.className = 'official-site-link-anchor';
+  $officialSiteLinkAnchor.textContent = game.website;
+  $officialSiteLinkAnchor.setAttribute('href', game.website);
+  $officialSiteLinkAnchor.setAttribute('target', '_blank');
+  $officialSiteLinkHeading.append($officialSiteLinkAnchor);
 
   return $row;
 }

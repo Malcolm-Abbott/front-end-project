@@ -48,13 +48,8 @@ $row?.addEventListener('click', async (event) => {
   } else if ($eventTarget.className === 'game-img') {
     viewSwap('game');
     const gameResult = await getGame($eventTarget.id);
+    data.game = $eventTarget.id;
     $gameDescriptionContainer.prepend(renderGamePage(gameResult));
-    const $descriptionParagraph = document.querySelector(
-      '.description-paragraph',
-    );
-    $descriptionParagraph.textContent = gameResult.description_raw;
-    const $officialSiteLink = document.querySelector('.official-site-link');
-    $officialSiteLink.textContent = gameResult.website;
   }
 });
 const $home = document.querySelector('div[data-view="home"]');
@@ -70,12 +65,14 @@ function viewSwap(view) {
       data.view = 'home';
       $header.textContent = 'Home';
       data.genres = null;
+      data.game = null;
       break;
     case 'genres':
       $genres.classList.remove('hidden');
       $home.className = 'hidden';
       data.view = 'genres';
       $header.textContent = 'Genres';
+      data.game = null;
       break;
     case 'game':
       $game.classList.remove('hidden');
@@ -118,16 +115,16 @@ function renderGame(game) {
 }
 const $iconHome = document.querySelector('.fa-house');
 $iconHome.addEventListener('click', () => {
+  const $colSixGenres = document.querySelectorAll('.col-six-genres');
+  const $flexDetails = document.querySelector('.flex-details');
   switch (data.view) {
     case 'genres':
-      const $colSixGenres = document.querySelectorAll('.col-six-genres');
       $colSixGenres.forEach((element) => {
         element.remove();
       });
       break;
     case 'game':
-      const $flexDetails = document.querySelector('.flex-details');
-      $flexDetails.remove();
+      $flexDetails?.remove();
       break;
   }
   $searchBar.value = '';
@@ -160,6 +157,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     genresResults.forEach((result) => {
       $flexGenres.prepend(renderGame(result));
     });
+  } else if (data.game !== null) {
+    viewSwap('game');
+    const gameResult = await searchGameByInput(data.game);
+    $gameDescriptionContainer.prepend(renderGamePage(gameResult));
   }
 });
 const $searchBar = document.querySelector('#search-bar');
@@ -185,12 +186,8 @@ $searchBar.addEventListener('keydown', async (event) => {
     $searchBar.value = '';
     const gameResult = await searchGameByInput(searchValue);
     $gameDescriptionContainer.prepend(renderGamePage(gameResult));
-    const $descriptionParagraph = document.querySelector(
-      '.description-paragraph',
-    );
-    $descriptionParagraph.textContent = gameResult.description_raw;
-    const $officialSiteLink = document.querySelector('.official-site-link');
-    $officialSiteLink.textContent = gameResult.website;
+    const $flexDetails2 = document.querySelector('.flex-details');
+    data.game = $flexDetails2?.id;
   }
 });
 const $searchIcon = document.querySelector('.fa-magnifying-glass');
@@ -216,12 +213,8 @@ $searchIcon?.addEventListener('click', async () => {
     $searchBar.value = '';
     const gameResult = await searchGameByInput(searchValue);
     $gameDescriptionContainer.prepend(renderGamePage(gameResult));
-    const $descriptionParagraph = document.querySelector(
-      '.description-paragraph',
-    );
-    $descriptionParagraph.textContent = gameResult.description_raw;
-    const $officialSiteLink = document.querySelector('.official-site-link');
-    $officialSiteLink.textContent = gameResult.website;
+    const $flexDetails2 = document.querySelector('.flex-details');
+    data.game = $flexDetails2?.id;
   }
 });
 async function getGame(game) {
@@ -254,6 +247,7 @@ async function searchGameByInput(game) {
 function renderGamePage(game) {
   const $row = document.createElement('div');
   $row.className = 'row flex-details';
+  $row.id = game.slug;
   const $colOneThird = document.createElement('div');
   $colOneThird.className = 'col-one-third';
   $row.append($colOneThird);
@@ -269,6 +263,7 @@ function renderGamePage(game) {
   $colTwoThirds.append($descriptionHeading);
   const $descriptionParagraph = document.createElement('p');
   $descriptionParagraph.className = 'description-paragraph';
+  $descriptionParagraph.textContent = game.description_raw;
   $colTwoThirds.append($descriptionParagraph);
   const $flexOfficial = document.createElement('div');
   $flexOfficial.className = 'col-one-third flex-official';
@@ -280,8 +275,14 @@ function renderGamePage(game) {
   $officialSiteHeading.className = 'official-site-heading';
   $officialSiteHeading.textContent = 'Visit Official Website';
   $colFull.append($officialSiteHeading);
-  const $officialSiteLink = document.createElement('h3');
-  $officialSiteLink.className = 'official-site-link';
-  $colFull.append($officialSiteLink);
+  const $officialSiteLinkHeading = document.createElement('h3');
+  $officialSiteLinkHeading.className = 'official-site-link-heading';
+  $colFull.append($officialSiteLinkHeading);
+  const $officialSiteLinkAnchor = document.createElement('a');
+  $officialSiteLinkAnchor.className = 'official-site-link-anchor';
+  $officialSiteLinkAnchor.textContent = game.website;
+  $officialSiteLinkAnchor.setAttribute('href', game.website);
+  $officialSiteLinkAnchor.setAttribute('target', '_blank');
+  $officialSiteLinkHeading.append($officialSiteLinkAnchor);
   return $row;
 }
