@@ -2,12 +2,19 @@
 const $row = document.querySelector('.flex-main');
 const $genresHeader = document.querySelector('.genres-header');
 const $flexGenres = document.querySelector('.flex-genres');
+const $gameDescriptionContainer = document.querySelector(
+  '.game-description-container',
+);
+if (!$genresHeader) throw new Error('The $genresHeader query failed');
+if (!$flexGenres) throw new Error('The $flexGenres query failed');
+if (!$gameDescriptionContainer)
+  throw new Error('The $gameDescriptionContainer query failed');
 $row?.addEventListener('click', async (event) => {
   const $eventTarget = event.target;
   if (!$eventTarget) throw new Error('No event target!');
-  if ($eventTarget.matches('img')) {
+  if ($eventTarget.className === 'genres-img') {
     viewSwap('genres');
-    switch ($eventTarget.className) {
+    switch ($eventTarget.id) {
       case 'shooter':
         $genresHeader.textContent = 'Shooters';
         data.genres = 'shooter';
@@ -33,28 +40,47 @@ $row?.addEventListener('click', async (event) => {
         data.genres = 'simulation';
         break;
     }
-    getGenres($eventTarget.className);
-    const genresResults = await getGenres($eventTarget.className);
+    getGenres($eventTarget.id);
+    const genresResults = await getGenres($eventTarget.id);
     genresResults.forEach((result) => {
       $flexGenres.prepend(renderGame(result));
     });
+  } else if ($eventTarget.className === 'game-img') {
+    viewSwap('game');
+    const gameResult = await getGame($eventTarget.id);
+    data.game = $eventTarget.id;
+    $gameDescriptionContainer.prepend(renderGamePage(gameResult));
   }
 });
 const $home = document.querySelector('div[data-view="home"]');
 const $genres = document.querySelector('div[data-view="genres"]');
+const $game = document.querySelector('div[data-view="game"]');
 function viewSwap(view) {
   const $header = document.querySelector('.header');
-  if (view === $home.dataset.view) {
-    $home.classList.remove('hidden');
-    $genres.classList.add('hidden');
-    data.view = 'home';
-    $header.textContent = 'Home';
-    data.genres = null;
-  } else {
-    $genres.classList.remove('hidden');
-    $home.classList.add('hidden');
-    data.view = 'genres';
-    $header.textContent = 'Genres';
+  switch (view) {
+    case 'home':
+      $home.classList.remove('hidden');
+      $genres.className = 'hidden';
+      $game.className = 'hidden';
+      data.view = 'home';
+      $header.textContent = 'Home';
+      data.genres = null;
+      data.game = null;
+      break;
+    case 'genres':
+      $genres.classList.remove('hidden');
+      $home.className = 'hidden';
+      data.view = 'genres';
+      $header.textContent = 'Genres';
+      data.game = null;
+      break;
+    case 'game':
+      $game.classList.remove('hidden');
+      $home.className = 'hidden';
+      $genres.className = 'hidden';
+      data.view = 'game';
+      data.genres = null;
+      break;
   }
 }
 async function getGenres(genres) {
@@ -90,9 +116,17 @@ function renderGame(game) {
 const $iconHome = document.querySelector('.fa-house');
 $iconHome.addEventListener('click', () => {
   const $colSixGenres = document.querySelectorAll('.col-six-genres');
-  $colSixGenres.forEach((element) => {
-    element.remove();
-  });
+  const $flexDetails = document.querySelector('.flex-details');
+  switch (data.view) {
+    case 'genres':
+      $colSixGenres.forEach((element) => {
+        element.remove();
+      });
+      break;
+    case 'game':
+      $flexDetails?.remove();
+      break;
+  }
   $searchBar.value = '';
   viewSwap('home');
 });
@@ -123,6 +157,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     genresResults.forEach((result) => {
       $flexGenres.prepend(renderGame(result));
     });
+  } else if (data.game !== null) {
+    viewSwap('game');
+    const gameResult = await searchGameByInput(data.game);
+    $gameDescriptionContainer.prepend(renderGamePage(gameResult));
   }
 });
 const $searchBar = document.querySelector('#search-bar');
@@ -140,9 +178,16 @@ $searchBar.addEventListener('keydown', async (event) => {
       }
       i++;
     });
-    viewSwap('genres');
+    const $flexDetails = document.querySelector('.flex-details');
+    if ($flexDetails) {
+      $flexDetails.remove();
+    }
+    viewSwap('game');
+    $searchBar.value = '';
     const gameResult = await searchGameByInput(searchValue);
-    $flexGenres.prepend(renderGame(gameResult));
+    $gameDescriptionContainer.prepend(renderGamePage(gameResult));
+    const $flexDetails2 = document.querySelector('.flex-details');
+    data.game = $flexDetails2?.id;
   }
 });
 const $searchIcon = document.querySelector('.fa-magnifying-glass');
@@ -160,12 +205,19 @@ $searchIcon?.addEventListener('click', async () => {
       }
       i++;
     });
-    viewSwap('genres');
+    const $flexDetails = document.querySelector('.flex-details');
+    if ($flexDetails) {
+      $flexDetails.remove();
+    }
+    viewSwap('game');
+    $searchBar.value = '';
     const gameResult = await searchGameByInput(searchValue);
-    $flexGenres.prepend(renderGame(gameResult));
+    $gameDescriptionContainer.prepend(renderGamePage(gameResult));
+    const $flexDetails2 = document.querySelector('.flex-details');
+    data.game = $flexDetails2?.id;
   }
 });
-async function searchGame(game) {
+async function getGame(game) {
   try {
     const response = await fetch(
       `https://api.rawg.io/api/games/${game}?key=721b55f2e5094e67aea26d3b8bc35d43`,
@@ -191,4 +243,43 @@ async function searchGameByInput(game) {
   } catch (error) {
     console.error(error);
   }
+}
+function renderGamePage(game) {
+  const $row = document.createElement('div');
+  $row.className = 'row flex-details';
+  $row.id = game.slug;
+  const $colOneThird = document.createElement('div');
+  $colOneThird.className = 'col-one-third';
+  $row.append($colOneThird);
+  const $img = document.createElement('img');
+  $img.setAttribute('src', game.background_image);
+  $colOneThird.append($img);
+  const $colTwoThirds = document.createElement('div');
+  $colTwoThirds.className = 'col-two-thirds';
+  $row.append($colTwoThirds);
+  const $descriptionHeading = document.createElement('h1');
+  $descriptionHeading.className = 'description-heading';
+  $descriptionHeading.textContent = 'Description';
+  $colTwoThirds.append($descriptionHeading);
+  const $descriptionParagraph = document.createElement('p');
+  $descriptionParagraph.className = 'description-paragraph';
+  $descriptionParagraph.textContent = game.description_raw;
+  $colTwoThirds.append($descriptionParagraph);
+  const $flexOfficial = document.createElement('div');
+  $flexOfficial.className = 'col-one-third flex-official';
+  $row.append($flexOfficial);
+  const $colFull = document.createElement('div');
+  $colFull.className = 'col-full';
+  $flexOfficial.append($colFull);
+  const $officialSiteHeading = document.createElement('h2');
+  $officialSiteHeading.className = 'official-site-heading';
+  $officialSiteHeading.textContent = 'Visit Official Website';
+  $colFull.append($officialSiteHeading);
+  const $officialSiteLinkAnchor = document.createElement('a');
+  $officialSiteLinkAnchor.className = 'official-site-link-anchor';
+  $officialSiteLinkAnchor.textContent = game.website;
+  $officialSiteLinkAnchor.setAttribute('href', game.website);
+  $officialSiteLinkAnchor.setAttribute('target', '_blank');
+  $colFull.append($officialSiteLinkAnchor);
+  return $row;
 }

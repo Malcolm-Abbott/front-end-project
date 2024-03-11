@@ -2,6 +2,7 @@
 let data = {
   view: 'home',
   genres: null,
+  game: null,
 };
 window.addEventListener('beforeunload', () => {
   const dataJSON = JSON.stringify(data);

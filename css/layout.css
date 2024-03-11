@@ -20,3 +20,16 @@
 .col-six {
   flex-basis: calc(100% / 6);
 }
+
+.flex-details {
+  margin-top: 1.75rem;
+}
+
+.col-one-third {
+  flex-basis: calc(100% / 3);
+  min-height: 25rem;
+}
+
+.col-two-thirds {
+  flex-basis: calc((100% / 3) * 2);
+}
