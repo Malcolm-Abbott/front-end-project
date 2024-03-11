@@ -161,6 +161,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     viewSwap('game');
     const gameResult = await searchGameByInput(data.game);
     $gameDescriptionContainer.prepend(renderGamePage(gameResult));
+    // const $trailerImg = document.querySelector('.trailer') as HTMLImageElement;
+    // const trailer = await getTrailer(data.game);
+    // $trailerImg.setAttribute('src', trailer.trailerImg);
+    // console.log('trailer:', trailer);
   }
 });
 const $searchBar = document.querySelector('#search-bar');
@@ -244,6 +248,27 @@ async function searchGameByInput(game) {
     console.error(error);
   }
 }
+async function getTrailer(game) {
+  try {
+    const response = await fetch(
+      `https://api.rawg.io/api/games/${game}/movies?key=721b55f2e5094e67aea26d3b8bc35d43`,
+    );
+    if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
+    const result = await response.json();
+    const trailers = result.results;
+    const trailerImg = trailers[0]?.preview;
+    const trailerLinkSet = trailers[0]?.data;
+    const trailerLink = trailerLinkSet[480];
+    const trailer = {
+      trailerImg,
+      trailerLink,
+    };
+    return trailer;
+  } catch (error) {
+    console.error(error);
+  }
+}
+getTrailer('path-of-exile');
 function renderGamePage(game) {
   const $row = document.createElement('div');
   $row.className = 'row flex-details';
@@ -281,5 +306,22 @@ function renderGamePage(game) {
   $officialSiteLinkAnchor.setAttribute('href', game.website);
   $officialSiteLinkAnchor.setAttribute('target', '_blank');
   $colFull.append($officialSiteLinkAnchor);
+  const $trailerDiv = document.createElement('div');
+  $trailerDiv.className = 'col-two-thirds trailer-div';
+  $row.append($trailerDiv);
+  const $trailerHeading = document.createElement('h2');
+  $trailerHeading.className = 'trailer-heading';
+  $trailerHeading.textContent = 'Watch Trailer';
+  $trailerDiv.append($trailerHeading);
+  const $trailerImg = document.createElement('img');
+  $trailerImg.className = 'trailer';
+  $trailerDiv.append($trailerImg);
   return $row;
 }
+// const $trailerImg = document.querySelector('.trailer') as HTMLImageElement;
+// const trailerSrc = $trailerImg?.getAttribute('src');
+// if (trailerSrc) {
+//   console.log('trailerSrc:', trailerSrc);
+// } else {
+//   console.log('trailer src attribute not defined');
+// }

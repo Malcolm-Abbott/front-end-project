@@ -6,6 +6,11 @@ interface Values {
   slug: string;
 }
 
+interface Trailer {
+  trailerImg: string;
+  trailerLink: string;
+}
+
 const $row = document.querySelector('.flex-main') as HTMLDivElement;
 const $genresHeader = document.querySelector(
   '.genres-header',
@@ -188,6 +193,10 @@ document.addEventListener('DOMContentLoaded', async (): Promise<void> => {
     viewSwap('game');
     const gameResult = await searchGameByInput(data.game);
     $gameDescriptionContainer.prepend(renderGamePage(gameResult));
+    // const $trailerImg = document.querySelector('.trailer') as HTMLImageElement;
+    // const trailer = await getTrailer(data.game);
+    // $trailerImg.setAttribute('src', trailer.trailerImg);
+    // console.log('trailer:', trailer);
   }
 });
 
@@ -284,6 +293,29 @@ async function searchGameByInput(game: string): Promise<any> {
   }
 }
 
+async function getTrailer(game: string): Promise<any> {
+  try {
+    const response = await fetch(
+      `https://api.rawg.io/api/games/${game}/movies?key=721b55f2e5094e67aea26d3b8bc35d43`,
+    );
+    if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
+    const result = await response.json();
+    const trailers = result.results;
+    const trailerImg = trailers[0]?.preview;
+    const trailerLinkSet = trailers[0]?.data;
+    const trailerLink = trailerLinkSet[480];
+    const trailer: Trailer = {
+      trailerImg,
+      trailerLink,
+    };
+    return trailer;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+getTrailer('path-of-exile');
+
 function renderGamePage(game: Values): HTMLDivElement {
   const $row = document.createElement('div') as HTMLDivElement;
   $row.className = 'row flex-details';
@@ -339,5 +371,26 @@ function renderGamePage(game: Values): HTMLDivElement {
   $officialSiteLinkAnchor.setAttribute('target', '_blank');
   $colFull.append($officialSiteLinkAnchor);
 
+  const $trailerDiv = document.createElement('div') as HTMLDivElement;
+  $trailerDiv.className = 'col-two-thirds trailer-div';
+  $row.append($trailerDiv);
+
+  const $trailerHeading = document.createElement('h2') as HTMLHeadingElement;
+  $trailerHeading.className = 'trailer-heading';
+  $trailerHeading.textContent = 'Watch Trailer';
+  $trailerDiv.append($trailerHeading);
+
+  const $trailerImg = document.createElement('img') as HTMLImageElement;
+  $trailerImg.className = 'trailer';
+  $trailerDiv.append($trailerImg);
+
   return $row;
 }
+
+// const $trailerImg = document.querySelector('.trailer') as HTMLImageElement;
+// const trailerSrc = $trailerImg?.getAttribute('src');
+// if (trailerSrc) {
+//   console.log('trailerSrc:', trailerSrc);
+// } else {
+//   console.log('trailer src attribute not defined');
+// }

@@ -151,3 +151,12 @@ a {
     align-items: start;
   }
 }
+
+.trailer-heading {
+  text-align: center;
+}
+
+.trailer {
+  border: 2px solid green;
+  height: 80%;
+}
