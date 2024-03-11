@@ -330,12 +330,6 @@ function renderGamePage(game: Values): HTMLDivElement {
   $officialSiteHeading.textContent = 'Visit Official Website';
   $colFull.append($officialSiteHeading);
 
-  const $officialSiteLinkHeading = document.createElement(
-    'h3',
-  ) as HTMLHeadingElement;
-  $officialSiteLinkHeading.className = 'official-site-link-heading';
-  $colFull.append($officialSiteLinkHeading);
-
   const $officialSiteLinkAnchor = document.createElement(
     'a',
   ) as HTMLAnchorElement;
@@ -343,7 +337,7 @@ function renderGamePage(game: Values): HTMLDivElement {
   $officialSiteLinkAnchor.textContent = game.website;
   $officialSiteLinkAnchor.setAttribute('href', game.website);
   $officialSiteLinkAnchor.setAttribute('target', '_blank');
-  $officialSiteLinkHeading.append($officialSiteLinkAnchor);
+  $colFull.append($officialSiteLinkAnchor);
 
   return $row;
 }

@@ -275,14 +275,11 @@ function renderGamePage(game) {
   $officialSiteHeading.className = 'official-site-heading';
   $officialSiteHeading.textContent = 'Visit Official Website';
   $colFull.append($officialSiteHeading);
-  const $officialSiteLinkHeading = document.createElement('h3');
-  $officialSiteLinkHeading.className = 'official-site-link-heading';
-  $colFull.append($officialSiteLinkHeading);
   const $officialSiteLinkAnchor = document.createElement('a');
   $officialSiteLinkAnchor.className = 'official-site-link-anchor';
   $officialSiteLinkAnchor.textContent = game.website;
   $officialSiteLinkAnchor.setAttribute('href', game.website);
   $officialSiteLinkAnchor.setAttribute('target', '_blank');
-  $officialSiteLinkHeading.append($officialSiteLinkAnchor);
+  $colFull.append($officialSiteLinkAnchor);
   return $row;
 }
