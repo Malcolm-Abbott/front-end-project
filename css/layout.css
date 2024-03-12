@@ -32,5 +32,4 @@
 
 .col-two-thirds {
   flex-basis: calc((100% / 3) * 2);
-  border: 2px solid red;
 }

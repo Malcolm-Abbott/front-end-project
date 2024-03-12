@@ -380,9 +380,18 @@ function renderGamePage(game: Values): HTMLDivElement {
   $trailerHeading.textContent = 'Watch Trailer';
   $trailerDiv.append($trailerHeading);
 
+  const $trailerWrapper = document.createElement('div') as HTMLDivElement;
+  $trailerWrapper.className = 'trailer-wrapper';
+  $trailerDiv.append($trailerWrapper);
+
   const $trailerImg = document.createElement('img') as HTMLImageElement;
   $trailerImg.className = 'trailer';
-  $trailerDiv.append($trailerImg);
+  $trailerImg.setAttribute('src', './images/placeholder-image.png');
+  $trailerWrapper.append($trailerImg);
+
+  const $playIcon = document.createElement('i') as HTMLElement;
+  $playIcon.className = 'fa-solid fa-play fa-2xl';
+  $trailerWrapper.append($playIcon);
 
   return $row;
 }

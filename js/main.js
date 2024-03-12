@@ -313,9 +313,16 @@ function renderGamePage(game) {
   $trailerHeading.className = 'trailer-heading';
   $trailerHeading.textContent = 'Watch Trailer';
   $trailerDiv.append($trailerHeading);
+  const $trailerWrapper = document.createElement('div');
+  $trailerWrapper.className = 'trailer-wrapper';
+  $trailerDiv.append($trailerWrapper);
   const $trailerImg = document.createElement('img');
   $trailerImg.className = 'trailer';
-  $trailerDiv.append($trailerImg);
+  $trailerImg.setAttribute('src', './images/placeholder-image.png');
+  $trailerWrapper.append($trailerImg);
+  const $playIcon = document.createElement('i');
+  $playIcon.className = 'fa-solid fa-play fa-2xl';
+  $trailerWrapper.append($playIcon);
   return $row;
 }
 // const $trailerImg = document.querySelector('.trailer') as HTMLImageElement;
