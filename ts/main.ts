@@ -66,6 +66,23 @@ $row?.addEventListener('click', async (event: Event) => {
     const gameResult = await getGame($eventTarget.id);
     data.game = $eventTarget.id;
     $gameDescriptionContainer.prepend(renderGamePage(gameResult));
+    const $trailerImg = document.querySelector('.trailer') as HTMLImageElement;
+    const trailer = await getTrailer(data.game);
+    if (trailer) $trailerImg.setAttribute('src', trailer.trailerImg);
+  }
+});
+
+$flexGenres?.addEventListener('click', async (event: Event) => {
+  const $eventTarget = event.target as HTMLImageElement;
+  if (!$eventTarget) throw new Error('No event target!');
+  if ($eventTarget.matches('img')) {
+    viewSwap('game');
+    const gameResult = await getGame($eventTarget.id);
+    data.game = $eventTarget.id;
+    $gameDescriptionContainer.prepend(renderGamePage(gameResult));
+    const $trailerImg = document.querySelector('.trailer') as HTMLImageElement;
+    const trailer = await getTrailer(data.game);
+    if (trailer) $trailerImg.setAttribute('src', trailer.trailerImg);
   }
 });
 
@@ -129,6 +146,7 @@ function renderGame(game: Values): HTMLDivElement {
   const $gameImg = document.createElement('img') as HTMLImageElement;
   $gameImg.setAttribute('src', game.background_image);
   $gameImgWrapper.append($gameImg);
+  $gameImg.id = game.slug;
 
   const $gameImgText = document.createElement('div') as HTMLDivElement;
   $gameImgText.className = 'game-img-text';
@@ -193,10 +211,9 @@ document.addEventListener('DOMContentLoaded', async (): Promise<void> => {
     viewSwap('game');
     const gameResult = await searchGameByInput(data.game);
     $gameDescriptionContainer.prepend(renderGamePage(gameResult));
-    // const $trailerImg = document.querySelector('.trailer') as HTMLImageElement;
-    // const trailer = await getTrailer(data.game);
-    // $trailerImg.setAttribute('src', trailer.trailerImg);
-    // console.log('trailer:', trailer);
+    const $trailerImg = document.querySelector('.trailer') as HTMLImageElement;
+    const trailer = await getTrailer(data.game);
+    if (trailer) $trailerImg.setAttribute('src', trailer.trailerImg);
   }
 });
 
@@ -228,6 +245,9 @@ $searchBar.addEventListener('keydown', async (event: any): Promise<void> => {
       '.flex-details',
     ) as HTMLDivElement;
     data.game = $flexDetails2?.id;
+    const $trailerImg = document.querySelector('.trailer') as HTMLImageElement;
+    const trailer = await getTrailer(data.game);
+    if (trailer) $trailerImg.setAttribute('src', trailer.trailerImg);
   }
 });
 
@@ -261,6 +281,9 @@ $searchIcon?.addEventListener('click', async (): Promise<void> => {
       '.flex-details',
     ) as HTMLDivElement;
     data.game = $flexDetails2?.id;
+    const $trailerImg = document.querySelector('.trailer') as HTMLImageElement;
+    const trailer = await getTrailer(data.game);
+    if (trailer) $trailerImg.setAttribute('src', trailer.trailerImg);
   }
 });
 
@@ -301,9 +324,12 @@ async function getTrailer(game: string): Promise<any> {
     if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
     const result = await response.json();
     const trailers = result.results;
+    if (trailers.length < 1) return alert(`${game} trailer unavailable`);
     const trailerImg = trailers[0]?.preview;
     const trailerLinkSet = trailers[0]?.data;
     const trailerLink = trailerLinkSet[480];
+    if (trailerLink === undefined || trailerImg === undefined)
+      alert(`${game} trailer unavailable`);
     const trailer: Trailer = {
       trailerImg,
       trailerLink,
@@ -313,8 +339,6 @@ async function getTrailer(game: string): Promise<any> {
     console.error(error);
   }
 }
-
-getTrailer('path-of-exile');
 
 function renderGamePage(game: Values): HTMLDivElement {
   const $row = document.createElement('div') as HTMLDivElement;
@@ -396,10 +420,22 @@ function renderGamePage(game: Values): HTMLDivElement {
   return $row;
 }
 
-// const $trailerImg = document.querySelector('.trailer') as HTMLImageElement;
-// const trailerSrc = $trailerImg?.getAttribute('src');
-// if (trailerSrc) {
-//   console.log('trailerSrc:', trailerSrc);
-// } else {
-//   console.log('trailer src attribute not defined');
-// }
+$gameDescriptionContainer?.addEventListener('click', async (event: Event) => {
+  const $eventTarget = event.target as HTMLElement;
+  if ($eventTarget.matches('.fa-play')) {
+    const $trailerImg = document.querySelector('.trailer') as HTMLImageElement;
+    if (!data.game) throw new Error('Game description unavailable');
+    const trailer = await getTrailer(data.game);
+    console.log('trailer:', trailer);
+    const $trailer = document.createElement('video') as HTMLVideoElement;
+    $trailer.setAttribute('autoplay', 'true');
+
+    const $source = document.createElement('source') as HTMLSourceElement;
+    $source.setAttribute('src', trailer.trailerLink);
+    $source.setAttribute('type', 'video/mp4');
+    $trailer.append($source);
+    console.log($trailer);
+
+    $trailerImg?.replaceWith($trailer);
+  }
+});

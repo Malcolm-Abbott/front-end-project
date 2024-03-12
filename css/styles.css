@@ -160,9 +160,18 @@ a {
   position: relative;
 }
 
+.trailer {
+  border-radius: 0.5rem;
+}
+
 .fa-play {
   top: 50%;
   left: 50%;
   position: absolute;
   transform: translate(-50%, -50%);
+}
+
+video {
+  width: 100%;
+  border-radius: 0.5rem;
 }

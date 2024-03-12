@@ -50,6 +50,22 @@ $row?.addEventListener('click', async (event) => {
     const gameResult = await getGame($eventTarget.id);
     data.game = $eventTarget.id;
     $gameDescriptionContainer.prepend(renderGamePage(gameResult));
+    const $trailerImg = document.querySelector('.trailer');
+    const trailer = await getTrailer(data.game);
+    if (trailer) $trailerImg.setAttribute('src', trailer.trailerImg);
+  }
+});
+$flexGenres?.addEventListener('click', async (event) => {
+  const $eventTarget = event.target;
+  if (!$eventTarget) throw new Error('No event target!');
+  if ($eventTarget.matches('img')) {
+    viewSwap('game');
+    const gameResult = await getGame($eventTarget.id);
+    data.game = $eventTarget.id;
+    $gameDescriptionContainer.prepend(renderGamePage(gameResult));
+    const $trailerImg = document.querySelector('.trailer');
+    const trailer = await getTrailer(data.game);
+    if (trailer) $trailerImg.setAttribute('src', trailer.trailerImg);
   }
 });
 const $home = document.querySelector('div[data-view="home"]');
@@ -105,6 +121,7 @@ function renderGame(game) {
   const $gameImg = document.createElement('img');
   $gameImg.setAttribute('src', game.background_image);
   $gameImgWrapper.append($gameImg);
+  $gameImg.id = game.slug;
   const $gameImgText = document.createElement('div');
   $gameImgText.className = 'game-img-text';
   $colSix.append($gameImgText);
@@ -161,10 +178,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     viewSwap('game');
     const gameResult = await searchGameByInput(data.game);
     $gameDescriptionContainer.prepend(renderGamePage(gameResult));
-    // const $trailerImg = document.querySelector('.trailer') as HTMLImageElement;
-    // const trailer = await getTrailer(data.game);
-    // $trailerImg.setAttribute('src', trailer.trailerImg);
-    // console.log('trailer:', trailer);
+    const $trailerImg = document.querySelector('.trailer');
+    const trailer = await getTrailer(data.game);
+    if (trailer) $trailerImg.setAttribute('src', trailer.trailerImg);
   }
 });
 const $searchBar = document.querySelector('#search-bar');
@@ -192,6 +208,9 @@ $searchBar.addEventListener('keydown', async (event) => {
     $gameDescriptionContainer.prepend(renderGamePage(gameResult));
     const $flexDetails2 = document.querySelector('.flex-details');
     data.game = $flexDetails2?.id;
+    const $trailerImg = document.querySelector('.trailer');
+    const trailer = await getTrailer(data.game);
+    if (trailer) $trailerImg.setAttribute('src', trailer.trailerImg);
   }
 });
 const $searchIcon = document.querySelector('.fa-magnifying-glass');
@@ -219,6 +238,9 @@ $searchIcon?.addEventListener('click', async () => {
     $gameDescriptionContainer.prepend(renderGamePage(gameResult));
     const $flexDetails2 = document.querySelector('.flex-details');
     data.game = $flexDetails2?.id;
+    const $trailerImg = document.querySelector('.trailer');
+    const trailer = await getTrailer(data.game);
+    if (trailer) $trailerImg.setAttribute('src', trailer.trailerImg);
   }
 });
 async function getGame(game) {
@@ -256,9 +278,12 @@ async function getTrailer(game) {
     if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
     const result = await response.json();
     const trailers = result.results;
+    if (trailers.length < 1) return alert(`${game} trailer unavailable`);
     const trailerImg = trailers[0]?.preview;
     const trailerLinkSet = trailers[0]?.data;
     const trailerLink = trailerLinkSet[480];
+    if (trailerLink === undefined || trailerImg === undefined)
+      alert(`${game} trailer unavailable`);
     const trailer = {
       trailerImg,
       trailerLink,
@@ -268,7 +293,6 @@ async function getTrailer(game) {
     console.error(error);
   }
 }
-getTrailer('path-of-exile');
 function renderGamePage(game) {
   const $row = document.createElement('div');
   $row.className = 'row flex-details';
@@ -325,10 +349,20 @@ function renderGamePage(game) {
   $trailerWrapper.append($playIcon);
   return $row;
 }
-// const $trailerImg = document.querySelector('.trailer') as HTMLImageElement;
-// const trailerSrc = $trailerImg?.getAttribute('src');
-// if (trailerSrc) {
-//   console.log('trailerSrc:', trailerSrc);
-// } else {
-//   console.log('trailer src attribute not defined');
-// }
+$gameDescriptionContainer?.addEventListener('click', async (event) => {
+  const $eventTarget = event.target;
+  if ($eventTarget.matches('.fa-play')) {
+    const $trailerImg = document.querySelector('.trailer');
+    if (!data.game) throw new Error('Game description unavailable');
+    const trailer = await getTrailer(data.game);
+    console.log('trailer:', trailer);
+    const $trailer = document.createElement('video');
+    $trailer.setAttribute('autoplay', 'true');
+    const $source = document.createElement('source');
+    $source.setAttribute('src', trailer.trailerLink);
+    $source.setAttribute('type', 'video/mp4');
+    $trailer.append($source);
+    console.log($trailer);
+    $trailerImg?.replaceWith($trailer);
+  }
+});
