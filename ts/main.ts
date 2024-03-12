@@ -6,6 +6,11 @@ interface Values {
   slug: string;
 }
 
+interface Trailer {
+  trailerImg: string;
+  trailerLink: string;
+}
+
 const $row = document.querySelector('.flex-main') as HTMLDivElement;
 const $genresHeader = document.querySelector(
   '.genres-header',
@@ -59,8 +64,27 @@ $row?.addEventListener('click', async (event: Event) => {
   } else if ($eventTarget.className === 'game-img') {
     viewSwap('game');
     const gameResult = await getGame($eventTarget.id);
+    $header.textContent = gameResult.name;
     data.game = $eventTarget.id;
     $gameDescriptionContainer.prepend(renderGamePage(gameResult));
+    const $trailerImg = document.querySelector('.trailer') as HTMLImageElement;
+    const trailer = await getTrailer(data.game);
+    if (trailer) $trailerImg.setAttribute('src', trailer.trailerImg);
+  }
+});
+
+$flexGenres?.addEventListener('click', async (event: Event) => {
+  const $eventTarget = event.target as HTMLImageElement;
+  if (!$eventTarget) throw new Error('No event target!');
+  if ($eventTarget.matches('img')) {
+    viewSwap('game');
+    const gameResult = await getGame($eventTarget.id);
+    $header.textContent = gameResult.name;
+    data.game = $eventTarget.id;
+    $gameDescriptionContainer.prepend(renderGamePage(gameResult));
+    const $trailerImg = document.querySelector('.trailer') as HTMLImageElement;
+    const trailer = await getTrailer(data.game);
+    if (trailer) $trailerImg.setAttribute('src', trailer.trailerImg);
   }
 });
 
@@ -69,9 +93,9 @@ const $genres = document.querySelector(
   'div[data-view="genres"]',
 ) as HTMLDivElement;
 const $game = document.querySelector('div[data-view="game"]') as HTMLDivElement;
+const $header = document.querySelector('.header') as HTMLHeadingElement;
 
 function viewSwap(view: 'home' | 'genres' | 'game'): void {
-  const $header = document.querySelector('.header') as HTMLHeadingElement;
   switch (view) {
     case 'home':
       $home.classList.remove('hidden');
@@ -124,6 +148,7 @@ function renderGame(game: Values): HTMLDivElement {
   const $gameImg = document.createElement('img') as HTMLImageElement;
   $gameImg.setAttribute('src', game.background_image);
   $gameImgWrapper.append($gameImg);
+  $gameImg.id = game.slug;
 
   const $gameImgText = document.createElement('div') as HTMLDivElement;
   $gameImgText.className = 'game-img-text';
@@ -187,7 +212,11 @@ document.addEventListener('DOMContentLoaded', async (): Promise<void> => {
   } else if (data.game !== null) {
     viewSwap('game');
     const gameResult = await searchGameByInput(data.game);
+    $header.textContent = gameResult.name;
     $gameDescriptionContainer.prepend(renderGamePage(gameResult));
+    const $trailerImg = document.querySelector('.trailer') as HTMLImageElement;
+    const trailer = await getTrailer(data.game);
+    if (trailer) $trailerImg.setAttribute('src', trailer.trailerImg);
   }
 });
 
@@ -207,18 +236,24 @@ $searchBar.addEventListener('keydown', async (event: any): Promise<void> => {
       }
       i++;
     });
-    const $flexDetails = document.querySelector('.flex-details');
+    const $flexDetails = document.querySelector(
+      '.flex-details',
+    ) as HTMLDivElement;
     if ($flexDetails) {
       $flexDetails.remove();
     }
     viewSwap('game');
     $searchBar.value = '';
     const gameResult = await searchGameByInput(searchValue);
+    $header.textContent = gameResult.name;
     $gameDescriptionContainer.prepend(renderGamePage(gameResult));
     const $flexDetails2 = document.querySelector(
       '.flex-details',
     ) as HTMLDivElement;
     data.game = $flexDetails2?.id;
+    const $trailerImg = document.querySelector('.trailer') as HTMLImageElement;
+    const trailer = await getTrailer(data.game);
+    if (trailer) $trailerImg.setAttribute('src', trailer.trailerImg);
   }
 });
 
@@ -247,11 +282,15 @@ $searchIcon?.addEventListener('click', async (): Promise<void> => {
     viewSwap('game');
     $searchBar.value = '';
     const gameResult = await searchGameByInput(searchValue);
+    $header.textContent = gameResult.name;
     $gameDescriptionContainer.prepend(renderGamePage(gameResult));
     const $flexDetails2 = document.querySelector(
       '.flex-details',
     ) as HTMLDivElement;
     data.game = $flexDetails2?.id;
+    const $trailerImg = document.querySelector('.trailer') as HTMLImageElement;
+    const trailer = await getTrailer(data.game);
+    if (trailer) $trailerImg.setAttribute('src', trailer.trailerImg);
   }
 });
 
@@ -279,6 +318,30 @@ async function searchGameByInput(game: string): Promise<any> {
     }
     const result = await response.json();
     return result;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function getTrailer(game: string): Promise<any> {
+  try {
+    const response = await fetch(
+      `https://api.rawg.io/api/games/${game}/movies?key=721b55f2e5094e67aea26d3b8bc35d43`,
+    );
+    if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
+    const result = await response.json();
+    const trailers = result.results;
+    if (trailers.length < 1) return;
+    const trailerImg = trailers[0]?.preview;
+    const trailerLinkSet = trailers[0]?.data;
+    const trailerLink = trailerLinkSet[480];
+    if (trailerLink === undefined || trailerImg === undefined)
+      alert(`${game} trailer unavailable`);
+    const trailer: Trailer = {
+      trailerImg,
+      trailerLink,
+    };
+    return trailer;
   } catch (error) {
     console.error(error);
   }
@@ -339,5 +402,57 @@ function renderGamePage(game: Values): HTMLDivElement {
   $officialSiteLinkAnchor.setAttribute('target', '_blank');
   $colFull.append($officialSiteLinkAnchor);
 
+  const $trailerDiv = document.createElement('div') as HTMLDivElement;
+  $trailerDiv.className = 'col-two-thirds trailer-div';
+  $row.append($trailerDiv);
+
+  const $trailerHeading = document.createElement('h2') as HTMLHeadingElement;
+  $trailerHeading.className = 'trailer-heading';
+  $trailerHeading.textContent = 'Watch Trailer';
+  $trailerDiv.append($trailerHeading);
+
+  const $trailerWrapper = document.createElement('div') as HTMLDivElement;
+  $trailerWrapper.className = 'trailer-wrapper';
+  $trailerDiv.append($trailerWrapper);
+
+  const $trailerImg = document.createElement('img') as HTMLImageElement;
+  $trailerImg.className = 'trailer';
+  $trailerImg.setAttribute('src', './images/placeholder-image.png');
+  $trailerWrapper.append($trailerImg);
+
+  const $playIcon = document.createElement('i') as HTMLElement;
+  $playIcon.className = 'fa-solid fa-play fa-2xl';
+  $trailerWrapper.append($playIcon);
+
   return $row;
 }
+
+$gameDescriptionContainer?.addEventListener('click', async (event: Event) => {
+  const $eventTarget = event.target as HTMLElement;
+  if ($eventTarget.matches('.fa-play')) {
+    const $trailerImg = document.querySelector('.trailer') as HTMLImageElement;
+    if (!data.game) throw new Error('Game description unavailable');
+    const trailer = await getTrailer(data.game);
+    if (!trailer) return alert(`trailer unavailable`);
+    const $trailer = document.createElement('video') as HTMLVideoElement;
+    $trailer.setAttribute('autoplay', 'true');
+
+    const $source = document.createElement('source') as HTMLSourceElement;
+    $source.setAttribute('src', trailer.trailerLink);
+    $source.setAttribute('type', 'video/mp4');
+    $trailer.append($source);
+
+    $trailerImg?.replaceWith($trailer);
+
+    const $playIcon = document.querySelector('.fa-play') as HTMLElement;
+
+    $trailer.addEventListener('loadeddata', () => {
+      $playIcon.style.display = 'none';
+    });
+
+    $trailer.addEventListener('ended', () => {
+      $playIcon.style.display = 'inline-block';
+      $trailer?.replaceWith($trailerImg);
+    });
+  }
+});

@@ -130,7 +130,7 @@ a {
   color: inherit;
 }
 
-@media (width < 780px) {
+@media (width < 980px) {
   .col-one-third {
     flex-basis: 100%;
     margin: 0 2rem;
@@ -145,9 +145,36 @@ a {
   .description-paragraph {
     margin-block-end: 3rem;
   }
+}
 
-  .flex-official {
-    display: flex;
-    align-items: start;
-  }
+.trailer-div {
+  margin-top: 2.5rem;
+}
+
+.trailer-heading {
+  text-align: center;
+}
+
+.trailer-wrapper {
+  position: relative;
+}
+
+.trailer {
+  border-radius: 0.5rem;
+  border: 1px solid #fff;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+.fa-play {
+  top: 50%;
+  left: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+video {
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid #fff;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
 }
