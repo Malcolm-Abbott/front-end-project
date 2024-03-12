@@ -278,7 +278,7 @@ async function getTrailer(game) {
     if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
     const result = await response.json();
     const trailers = result.results;
-    if (trailers.length < 1) return alert(`${game} trailer unavailable`);
+    if (trailers.length < 1) return;
     const trailerImg = trailers[0]?.preview;
     const trailerLinkSet = trailers[0]?.data;
     const trailerLink = trailerLinkSet[480];
@@ -355,14 +355,21 @@ $gameDescriptionContainer?.addEventListener('click', async (event) => {
     const $trailerImg = document.querySelector('.trailer');
     if (!data.game) throw new Error('Game description unavailable');
     const trailer = await getTrailer(data.game);
-    console.log('trailer:', trailer);
+    if (!trailer) return alert(`trailer unavailable`);
     const $trailer = document.createElement('video');
     $trailer.setAttribute('autoplay', 'true');
     const $source = document.createElement('source');
     $source.setAttribute('src', trailer.trailerLink);
     $source.setAttribute('type', 'video/mp4');
     $trailer.append($source);
-    console.log($trailer);
     $trailerImg?.replaceWith($trailer);
+    const $playIcon = document.querySelector('.fa-play');
+    $trailer.addEventListener('loadeddata', () => {
+      $playIcon.style.display = 'none';
+    });
+    $trailer.addEventListener('ended', () => {
+      $playIcon.style.display = 'inline-block';
+      $trailer?.replaceWith($trailerImg);
+    });
   }
 });

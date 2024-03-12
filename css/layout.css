@@ -27,7 +27,6 @@
 
 .col-one-third {
   flex-basis: calc(100% / 3);
-  min-height: 25rem;
 }
 
 .col-two-thirds {
