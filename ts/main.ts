@@ -64,6 +64,7 @@ $row?.addEventListener('click', async (event: Event) => {
   } else if ($eventTarget.className === 'game-img') {
     viewSwap('game');
     const gameResult = await getGame($eventTarget.id);
+    $header.textContent = gameResult.name;
     data.game = $eventTarget.id;
     $gameDescriptionContainer.prepend(renderGamePage(gameResult));
     const $trailerImg = document.querySelector('.trailer') as HTMLImageElement;
@@ -78,6 +79,7 @@ $flexGenres?.addEventListener('click', async (event: Event) => {
   if ($eventTarget.matches('img')) {
     viewSwap('game');
     const gameResult = await getGame($eventTarget.id);
+    $header.textContent = gameResult.name;
     data.game = $eventTarget.id;
     $gameDescriptionContainer.prepend(renderGamePage(gameResult));
     const $trailerImg = document.querySelector('.trailer') as HTMLImageElement;
@@ -91,9 +93,9 @@ const $genres = document.querySelector(
   'div[data-view="genres"]',
 ) as HTMLDivElement;
 const $game = document.querySelector('div[data-view="game"]') as HTMLDivElement;
+const $header = document.querySelector('.header') as HTMLHeadingElement;
 
 function viewSwap(view: 'home' | 'genres' | 'game'): void {
-  const $header = document.querySelector('.header') as HTMLHeadingElement;
   switch (view) {
     case 'home':
       $home.classList.remove('hidden');
@@ -210,6 +212,7 @@ document.addEventListener('DOMContentLoaded', async (): Promise<void> => {
   } else if (data.game !== null) {
     viewSwap('game');
     const gameResult = await searchGameByInput(data.game);
+    $header.textContent = gameResult.name;
     $gameDescriptionContainer.prepend(renderGamePage(gameResult));
     const $trailerImg = document.querySelector('.trailer') as HTMLImageElement;
     const trailer = await getTrailer(data.game);
@@ -233,13 +236,16 @@ $searchBar.addEventListener('keydown', async (event: any): Promise<void> => {
       }
       i++;
     });
-    const $flexDetails = document.querySelector('.flex-details');
+    const $flexDetails = document.querySelector(
+      '.flex-details',
+    ) as HTMLDivElement;
     if ($flexDetails) {
       $flexDetails.remove();
     }
     viewSwap('game');
     $searchBar.value = '';
     const gameResult = await searchGameByInput(searchValue);
+    $header.textContent = gameResult.name;
     $gameDescriptionContainer.prepend(renderGamePage(gameResult));
     const $flexDetails2 = document.querySelector(
       '.flex-details',
@@ -276,6 +282,7 @@ $searchIcon?.addEventListener('click', async (): Promise<void> => {
     viewSwap('game');
     $searchBar.value = '';
     const gameResult = await searchGameByInput(searchValue);
+    $header.textContent = gameResult.name;
     $gameDescriptionContainer.prepend(renderGamePage(gameResult));
     const $flexDetails2 = document.querySelector(
       '.flex-details',

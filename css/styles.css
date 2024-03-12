@@ -130,7 +130,7 @@ a {
   color: inherit;
 }
 
-@media (width < 780px) {
+@media (width < 980px) {
   .col-one-third {
     flex-basis: 100%;
     margin: 0 2rem;
