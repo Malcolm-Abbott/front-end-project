@@ -105,6 +105,7 @@ function viewSwap(view: 'home' | 'genres' | 'game'): void {
       $header.textContent = 'Home';
       data.genres = null;
       data.game = null;
+      $filterBar.setAttribute('placeholder', 'Filter by genre');
       break;
     case 'genres':
       $genres.classList.remove('hidden');
@@ -112,6 +113,7 @@ function viewSwap(view: 'home' | 'genres' | 'game'): void {
       data.view = 'genres';
       $header.textContent = 'Genres';
       data.game = null;
+      $filterBar.setAttribute('placeholder', 'Filter by platform');
       break;
     case 'game':
       $game.classList.remove('hidden');
@@ -119,6 +121,7 @@ function viewSwap(view: 'home' | 'genres' | 'game'): void {
       $genres.className = 'hidden';
       data.view = 'game';
       data.genres = null;
+      $filterBar.setAttribute('placeholder', 'Filter by genre');
       break;
   }
 }
@@ -454,5 +457,59 @@ $gameDescriptionContainer?.addEventListener('click', async (event: Event) => {
       $playIcon.style.display = 'inline-block';
       $trailer?.replaceWith($trailerImg);
     });
+  }
+});
+
+async function getGenresByPlatform(platform: string): Promise<any> {
+  try {
+    let parentPlatform;
+    switch (platform.toLowerCase()) {
+      case 'pc':
+        parentPlatform = 1;
+        break;
+      case 'playstation':
+        parentPlatform = 2;
+        break;
+      case 'xbox':
+        parentPlatform = 3;
+        break;
+      default:
+        alert('Invalid platform. Acceptable platforms: PC, PlayStation, Xbox');
+    }
+    const genre = data.genres;
+    const response = await fetch(
+      `https://api.rawg.io/api/games?key=721b55f2e5094e67aea26d3b8bc35d43&genres=${genre}&parent_platforms=${parentPlatform}`,
+    );
+    if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
+    const result = await response.json();
+    const arrayOfGenres = result.results;
+    return arrayOfGenres;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+const $filterBar = document.querySelector('#filter-bar') as HTMLInputElement;
+
+$filterBar?.addEventListener('keydown', async (event: any): Promise<any> => {
+  try {
+    if (event.key === 'Enter') {
+      const genresByPlatformResults = await getGenresByPlatform(
+        $filterBar.value,
+      );
+      const $colSixGenres = document.querySelectorAll('.col-six-genres');
+      switch (data.view) {
+        case 'genres':
+          $colSixGenres.forEach((element) => {
+            element.remove();
+          });
+          genresByPlatformResults.forEach((result: Values) => {
+            $flexGenres.prepend(renderGame(result));
+          });
+          break;
+      }
+    }
+  } catch (error) {
+    console.error(error);
   }
 });
