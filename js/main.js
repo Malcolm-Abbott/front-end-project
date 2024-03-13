@@ -84,7 +84,8 @@ function viewSwap(view) {
       $header.textContent = 'Home';
       data.genres = null;
       data.game = null;
-      $filterBar.setAttribute('placeholder', 'Filter by genre');
+      $filterBar.className = 'hidden';
+      $filterIcon.style.display = 'none';
       break;
     case 'genres':
       $genres.classList.remove('hidden');
@@ -92,7 +93,8 @@ function viewSwap(view) {
       data.view = 'genres';
       $header.textContent = 'Genres';
       data.game = null;
-      $filterBar.setAttribute('placeholder', 'Filter by platform');
+      $filterBar.classList.remove('hidden');
+      $filterIcon.style.display = 'inline-block';
       break;
     case 'game':
       $game.classList.remove('hidden');
@@ -100,7 +102,8 @@ function viewSwap(view) {
       $genres.className = 'hidden';
       data.view = 'game';
       data.genres = null;
-      $filterBar.setAttribute('placeholder', 'Filter by genre');
+      $filterBar.className = 'hidden';
+      $filterIcon.style.display = 'none';
       break;
   }
 }
@@ -187,6 +190,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const $trailerImg = document.querySelector('.trailer');
     const trailer = await getTrailer(data.game);
     if (trailer) $trailerImg.setAttribute('src', trailer.trailerImg);
+  } else if (data.view === 'home') {
+    $filterIcon.style.display = 'none';
   }
 });
 const $searchBar = document.querySelector('#search-bar');
@@ -410,6 +415,7 @@ async function getGenresByPlatform(platform) {
   }
 }
 const $filterBar = document.querySelector('#filter-bar');
+const $filterIcon = document.querySelector('.fa-filter');
 $filterBar?.addEventListener('keydown', async (event) => {
   try {
     if (event.key === 'Enter') {
@@ -417,16 +423,31 @@ $filterBar?.addEventListener('keydown', async (event) => {
         $filterBar.value,
       );
       const $colSixGenres = document.querySelectorAll('.col-six-genres');
-      switch (data.view) {
-        case 'genres':
-          $colSixGenres.forEach((element) => {
-            element.remove();
-          });
-          genresByPlatformResults.forEach((result) => {
-            $flexGenres.prepend(renderGame(result));
-          });
-          break;
-      }
+      $colSixGenres.forEach((element) => {
+        element.remove();
+      });
+      genresByPlatformResults.forEach((result) => {
+        $flexGenres.prepend(renderGame(result));
+      });
+      $filterBar.value = '';
+    }
+  } catch (error) {
+    console.error(error);
+  }
+});
+$filterIcon?.addEventListener('click', async () => {
+  try {
+    const filterBarValue = $filterBar.value;
+    if (filterBarValue.length > 0) {
+      const genresByPlatformResults = await getGenresByPlatform(filterBarValue);
+      const $colSixGenres = document.querySelectorAll('.col-six-genres');
+      $colSixGenres.forEach((element) => {
+        element.remove();
+      });
+      genresByPlatformResults.forEach((result) => {
+        $flexGenres.prepend(renderGame(result));
+      });
+      $filterBar.value = '';
     }
   } catch (error) {
     console.error(error);

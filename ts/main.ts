@@ -105,7 +105,8 @@ function viewSwap(view: 'home' | 'genres' | 'game'): void {
       $header.textContent = 'Home';
       data.genres = null;
       data.game = null;
-      $filterBar.setAttribute('placeholder', 'Filter by genre');
+      $filterBar.className = 'hidden';
+      $filterIcon.style.display = 'none';
       break;
     case 'genres':
       $genres.classList.remove('hidden');
@@ -113,7 +114,8 @@ function viewSwap(view: 'home' | 'genres' | 'game'): void {
       data.view = 'genres';
       $header.textContent = 'Genres';
       data.game = null;
-      $filterBar.setAttribute('placeholder', 'Filter by platform');
+      $filterBar.classList.remove('hidden');
+      $filterIcon.style.display = 'inline-block';
       break;
     case 'game':
       $game.classList.remove('hidden');
@@ -121,7 +123,8 @@ function viewSwap(view: 'home' | 'genres' | 'game'): void {
       $genres.className = 'hidden';
       data.view = 'game';
       data.genres = null;
-      $filterBar.setAttribute('placeholder', 'Filter by genre');
+      $filterBar.className = 'hidden';
+      $filterIcon.style.display = 'none';
       break;
   }
 }
@@ -167,7 +170,9 @@ function renderGame(game: Values): HTMLDivElement {
 const $iconHome = document.querySelector('.fa-house') as HTMLElement;
 
 $iconHome.addEventListener('click', (): void => {
-  const $colSixGenres = document.querySelectorAll('.col-six-genres');
+  const $colSixGenres = document.querySelectorAll(
+    '.col-six-genres',
+  ) as NodeListOf<Element>;
   const $flexDetails = document.querySelector(
     '.flex-details',
   ) as HTMLDivElement;
@@ -220,6 +225,8 @@ document.addEventListener('DOMContentLoaded', async (): Promise<void> => {
     const $trailerImg = document.querySelector('.trailer') as HTMLImageElement;
     const trailer = await getTrailer(data.game);
     if (trailer) $trailerImg.setAttribute('src', trailer.trailerImg);
+  } else if (data.view === 'home') {
+    $filterIcon.style.display = 'none';
   }
 });
 
@@ -490,6 +497,7 @@ async function getGenresByPlatform(platform: string): Promise<any> {
 }
 
 const $filterBar = document.querySelector('#filter-bar') as HTMLInputElement;
+const $filterIcon = document.querySelector('.fa-filter') as HTMLElement;
 
 $filterBar?.addEventListener('keydown', async (event: any): Promise<any> => {
   try {
@@ -497,17 +505,37 @@ $filterBar?.addEventListener('keydown', async (event: any): Promise<any> => {
       const genresByPlatformResults = await getGenresByPlatform(
         $filterBar.value,
       );
-      const $colSixGenres = document.querySelectorAll('.col-six-genres');
-      switch (data.view) {
-        case 'genres':
-          $colSixGenres.forEach((element) => {
-            element.remove();
-          });
-          genresByPlatformResults.forEach((result: Values) => {
-            $flexGenres.prepend(renderGame(result));
-          });
-          break;
-      }
+      const $colSixGenres = document.querySelectorAll(
+        '.col-six-genres',
+      ) as NodeListOf<Element>;
+      $colSixGenres.forEach((element) => {
+        element.remove();
+      });
+      genresByPlatformResults.forEach((result: Values) => {
+        $flexGenres.prepend(renderGame(result));
+      });
+      $filterBar.value = '';
+    }
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+$filterIcon?.addEventListener('click', async (): Promise<void> => {
+  try {
+    const filterBarValue = $filterBar.value;
+    if (filterBarValue.length > 0) {
+      const genresByPlatformResults = await getGenresByPlatform(filterBarValue);
+      const $colSixGenres = document.querySelectorAll(
+        '.col-six-genres',
+      ) as NodeListOf<Element>;
+      $colSixGenres.forEach((element) => {
+        element.remove();
+      });
+      genresByPlatformResults.forEach((result: Values) => {
+        $flexGenres.prepend(renderGame(result));
+      });
+      $filterBar.value = '';
     }
   } catch (error) {
     console.error(error);
