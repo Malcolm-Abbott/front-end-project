@@ -3,6 +3,7 @@ let data = {
   view: 'home',
   genres: null,
   game: null,
+  platform: null,
 };
 window.addEventListener('beforeunload', () => {
   const dataJSON = JSON.stringify(data);

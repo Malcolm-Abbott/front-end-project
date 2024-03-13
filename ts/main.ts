@@ -105,6 +105,7 @@ function viewSwap(view: 'home' | 'genres' | 'game'): void {
       $header.textContent = 'Home';
       data.genres = null;
       data.game = null;
+      data.platform = null;
       $filterBar.className = 'hidden';
       $filterIcon.style.display = 'none';
       break;
@@ -123,6 +124,7 @@ function viewSwap(view: 'home' | 'genres' | 'game'): void {
       $genres.className = 'hidden';
       data.view = 'game';
       data.genres = null;
+      data.platform = null;
       $filterBar.className = 'hidden';
       $filterIcon.style.display = 'none';
       break;
@@ -191,7 +193,19 @@ $iconHome.addEventListener('click', (): void => {
 });
 
 document.addEventListener('DOMContentLoaded', async (): Promise<void> => {
-  if (data.genres !== null) {
+  if (data.genres !== null && data.platform !== null) {
+    viewSwap('genres');
+    const genresByPlatformResults = await getGenresByPlatform(data.platform);
+    const $colSixGenres = document.querySelectorAll(
+      '.col-six-genres',
+    ) as NodeListOf<Element>;
+    $colSixGenres.forEach((element) => {
+      element.remove();
+    });
+    genresByPlatformResults.forEach((result: Values) => {
+      $flexGenres.prepend(renderGame(result));
+    });
+  } else if (data.genres !== null) {
     viewSwap('genres');
     switch (data.genres) {
       case 'shooter':
@@ -473,12 +487,15 @@ async function getGenresByPlatform(platform: string): Promise<any> {
     switch (platform.toLowerCase()) {
       case 'pc':
         parentPlatform = 1;
+        data.platform = 'pc';
         break;
       case 'playstation':
         parentPlatform = 2;
+        data.platform = 'playstation';
         break;
       case 'xbox':
         parentPlatform = 3;
+        data.platform = 'xbox';
         break;
       default:
         alert('Invalid platform. Acceptable platforms: PC, PlayStation, Xbox');
@@ -505,6 +522,10 @@ $filterBar?.addEventListener('keydown', async (event: any): Promise<any> => {
       const genresByPlatformResults = await getGenresByPlatform(
         $filterBar.value,
       );
+      if (genresByPlatformResults.length < 1) {
+        $filterBar.value = '';
+        return;
+      }
       const $colSixGenres = document.querySelectorAll(
         '.col-six-genres',
       ) as NodeListOf<Element>;
@@ -526,6 +547,10 @@ $filterIcon?.addEventListener('click', async (): Promise<void> => {
     const filterBarValue = $filterBar.value;
     if (filterBarValue.length > 0) {
       const genresByPlatformResults = await getGenresByPlatform(filterBarValue);
+      if (genresByPlatformResults.length < 1) {
+        $filterBar.value = '';
+        return;
+      }
       const $colSixGenres = document.querySelectorAll(
         '.col-six-genres',
       ) as NodeListOf<Element>;
