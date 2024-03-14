@@ -84,6 +84,9 @@ function viewSwap(view) {
       $header.textContent = 'Home';
       data.genres = null;
       data.game = null;
+      data.platform = null;
+      $filterBar.className = 'hidden';
+      $filterIcon.style.display = 'none';
       break;
     case 'genres':
       $genres.classList.remove('hidden');
@@ -91,6 +94,8 @@ function viewSwap(view) {
       data.view = 'genres';
       $header.textContent = 'Genres';
       data.game = null;
+      $filterBar.classList.remove('hidden');
+      $filterIcon.style.display = 'inline-block';
       break;
     case 'game':
       $game.classList.remove('hidden');
@@ -98,6 +103,9 @@ function viewSwap(view) {
       $genres.className = 'hidden';
       data.view = 'game';
       data.genres = null;
+      data.platform = null;
+      $filterBar.className = 'hidden';
+      $filterIcon.style.display = 'none';
       break;
   }
 }
@@ -150,7 +158,17 @@ $iconHome.addEventListener('click', () => {
   viewSwap('home');
 });
 document.addEventListener('DOMContentLoaded', async () => {
-  if (data.genres !== null) {
+  if (data.genres !== null && data.platform !== null) {
+    viewSwap('genres');
+    const genresByPlatformResults = await getGenresByPlatform(data.platform);
+    const $colSixGenres = document.querySelectorAll('.col-six-genres');
+    $colSixGenres.forEach((element) => {
+      element.remove();
+    });
+    genresByPlatformResults.forEach((result) => {
+      $flexGenres.prepend(renderGame(result));
+    });
+  } else if (data.genres !== null) {
     viewSwap('genres');
     switch (data.genres) {
       case 'shooter':
@@ -184,6 +202,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const $trailerImg = document.querySelector('.trailer');
     const trailer = await getTrailer(data.game);
     if (trailer) $trailerImg.setAttribute('src', trailer.trailerImg);
+  } else if (data.view === 'home') {
+    $filterIcon.style.display = 'none';
   }
 });
 const $searchBar = document.querySelector('#search-bar');
@@ -376,5 +396,83 @@ $gameDescriptionContainer?.addEventListener('click', async (event) => {
       $playIcon.style.display = 'inline-block';
       $trailer?.replaceWith($trailerImg);
     });
+  }
+});
+async function getGenresByPlatform(platform) {
+  try {
+    let parentPlatform;
+    switch (platform.toLowerCase()) {
+      case 'pc':
+        parentPlatform = 1;
+        data.platform = 'pc';
+        break;
+      case 'playstation':
+        parentPlatform = 2;
+        data.platform = 'playstation';
+        break;
+      case 'xbox':
+        parentPlatform = 3;
+        data.platform = 'xbox';
+        break;
+      default:
+        alert('Invalid platform. Acceptable platforms: PC, PlayStation, Xbox');
+    }
+    const genre = data.genres;
+    const response = await fetch(
+      `https://api.rawg.io/api/games?key=721b55f2e5094e67aea26d3b8bc35d43&genres=${genre}&parent_platforms=${parentPlatform}`,
+    );
+    if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
+    const result = await response.json();
+    const arrayOfGenres = result.results;
+    return arrayOfGenres;
+  } catch (error) {
+    console.error(error);
+  }
+}
+const $filterBar = document.querySelector('#filter-bar');
+const $filterIcon = document.querySelector('.fa-filter');
+$filterBar?.addEventListener('keydown', async (event) => {
+  try {
+    if (event.key === 'Enter') {
+      const genresByPlatformResults = await getGenresByPlatform(
+        $filterBar.value,
+      );
+      if (genresByPlatformResults.length < 1) {
+        $filterBar.value = '';
+        return;
+      }
+      const $colSixGenres = document.querySelectorAll('.col-six-genres');
+      $colSixGenres.forEach((element) => {
+        element.remove();
+      });
+      genresByPlatformResults.forEach((result) => {
+        $flexGenres.prepend(renderGame(result));
+      });
+      $filterBar.value = '';
+    }
+  } catch (error) {
+    console.error(error);
+  }
+});
+$filterIcon?.addEventListener('click', async () => {
+  try {
+    const filterBarValue = $filterBar.value;
+    if (filterBarValue.length > 0) {
+      const genresByPlatformResults = await getGenresByPlatform(filterBarValue);
+      if (genresByPlatformResults.length < 1) {
+        $filterBar.value = '';
+        return;
+      }
+      const $colSixGenres = document.querySelectorAll('.col-six-genres');
+      $colSixGenres.forEach((element) => {
+        element.remove();
+      });
+      genresByPlatformResults.forEach((result) => {
+        $flexGenres.prepend(renderGame(result));
+      });
+      $filterBar.value = '';
+    }
+  } catch (error) {
+    console.error(error);
   }
 });
