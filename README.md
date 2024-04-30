@@ -1,3 +1,3 @@
 # Game Repository
 
-A dynamic HTML, CSS, and TypeScript solo project.
+A web application for gamers who want to access game information.
