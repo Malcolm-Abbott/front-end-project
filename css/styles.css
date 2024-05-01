@@ -93,6 +93,18 @@ img {
   .fa-solid.fa-magnifying-glass.fa-lg {
     display: none;
   }
+
+  .header {
+    font-size: 1rem;
+  }
+
+  ::placeholder {
+    font-size: 0.75rem;
+  }
+
+  input {
+    margin-left: 0;
+  }
 }
 
 .game-description-container {
