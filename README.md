@@ -27,6 +27,24 @@ The user can:
 4. View a trailer for a game
 5. Filter games by platform
 
-### Preview - View Game Trailer
+### Preview - View Game Description | Trailer
 
-![]()
+![](/images/view-trailer.gif)
+
+### Preview - Filter Game by Genre | Platform
+
+![](/images/filter-genre-platform.gif)
+
+### System Requirements
+
+- TypeScript
+
+### Getting Started
+
+1. Clone the repository
+
+   ```shell
+   git clone https://github.com/Malcolm-Abbott/game-repository.git
+   ```
+
+2. Open index.html in your browser
