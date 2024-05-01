@@ -107,7 +107,7 @@ function viewSwap(view: 'home' | 'genres' | 'game'): void {
       data.game = null;
       data.platform = null;
       $filterBar.className = 'hidden';
-      $filterIcon.style.display = 'none';
+      $filterIcon.className = 'fa-solid fa-lg hidden';
       break;
     case 'genres':
       $genres.classList.remove('hidden');
@@ -116,7 +116,7 @@ function viewSwap(view: 'home' | 'genres' | 'game'): void {
       $header.textContent = 'Genres';
       data.game = null;
       $filterBar.classList.remove('hidden');
-      $filterIcon.style.display = 'inline-block';
+      $filterIcon.className = 'fa-solid fa-filter fa-lg';
       break;
     case 'game':
       $game.classList.remove('hidden');
@@ -126,7 +126,7 @@ function viewSwap(view: 'home' | 'genres' | 'game'): void {
       data.genres = null;
       data.platform = null;
       $filterBar.className = 'hidden';
-      $filterIcon.style.display = 'none';
+      $filterIcon.className = 'fa-solid fa-lg hidden';
       break;
   }
 }
@@ -167,6 +167,29 @@ function renderGame(game: Values): HTMLDivElement {
   $gameImgText.append($p);
 
   return $colSix;
+}
+
+function renderLoading(): HTMLDivElement {
+  const $ringWrapper = document.createElement('div') as HTMLDivElement;
+  $ringWrapper.className = 'lds-ring-wrapper';
+
+  const $ldsRing = document.createElement('div') as HTMLDivElement;
+  $ldsRing.className = 'lds-ring';
+  $ringWrapper.append($ldsRing);
+
+  const $div1 = document.createElement('div') as HTMLDivElement;
+  $ldsRing.append($div1);
+
+  const $div2 = document.createElement('div') as HTMLDivElement;
+  $ldsRing.append($div2);
+
+  const $div3 = document.createElement('div') as HTMLDivElement;
+  $ldsRing.append($div3);
+
+  const $div4 = document.createElement('div') as HTMLDivElement;
+  $ldsRing.append($div4);
+
+  return $ringWrapper;
 }
 
 const $iconHome = document.querySelector('.fa-house') as HTMLElement;
@@ -240,7 +263,7 @@ document.addEventListener('DOMContentLoaded', async (): Promise<void> => {
     const trailer = await getTrailer(data.game);
     if (trailer) $trailerImg.setAttribute('src', trailer.trailerImg);
   } else if (data.view === 'home') {
-    $filterIcon.style.display = 'none';
+    $filterIcon.className = 'fa-solid fa-lg hidden';
   }
 });
 
@@ -320,14 +343,23 @@ $searchIcon?.addEventListener('click', async (): Promise<void> => {
 
 async function getGame(game: string): Promise<any> {
   try {
+    $gameDescriptionContainer.prepend(renderLoading());
+    const $ldsRingWrapper = document.querySelector(
+      '.lds-ring-wrapper',
+    ) as HTMLDivElement;
     const response = await fetch(
       `https://api.rawg.io/api/games/${game}?key=721b55f2e5094e67aea26d3b8bc35d43`,
     );
     if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
     const result = await response.json();
+    $ldsRingWrapper?.remove();
     return result;
   } catch (error) {
     console.error(error);
+    const $ldsRingWrapper = document.querySelector(
+      '.lds-ring-wrapper',
+    ) as HTMLDivElement;
+    $ldsRingWrapper?.remove();
   }
 }
 

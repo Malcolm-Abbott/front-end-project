@@ -86,7 +86,7 @@ function viewSwap(view) {
       data.game = null;
       data.platform = null;
       $filterBar.className = 'hidden';
-      $filterIcon.style.display = 'none';
+      $filterIcon.className = 'fa-solid fa-lg hidden';
       break;
     case 'genres':
       $genres.classList.remove('hidden');
@@ -95,7 +95,7 @@ function viewSwap(view) {
       $header.textContent = 'Genres';
       data.game = null;
       $filterBar.classList.remove('hidden');
-      $filterIcon.style.display = 'inline-block';
+      $filterIcon.className = 'fa-solid fa-filter fa-lg';
       break;
     case 'game':
       $game.classList.remove('hidden');
@@ -105,7 +105,7 @@ function viewSwap(view) {
       data.genres = null;
       data.platform = null;
       $filterBar.className = 'hidden';
-      $filterIcon.style.display = 'none';
+      $filterIcon.className = 'fa-solid fa-lg hidden';
       break;
   }
 }
@@ -139,6 +139,22 @@ function renderGame(game) {
   $p.textContent = game.name;
   $gameImgText.append($p);
   return $colSix;
+}
+function renderLoading() {
+  const $ringWrapper = document.createElement('div');
+  $ringWrapper.className = 'lds-ring-wrapper';
+  const $ldsRing = document.createElement('div');
+  $ldsRing.className = 'lds-ring';
+  $ringWrapper.append($ldsRing);
+  const $div1 = document.createElement('div');
+  $ldsRing.append($div1);
+  const $div2 = document.createElement('div');
+  $ldsRing.append($div2);
+  const $div3 = document.createElement('div');
+  $ldsRing.append($div3);
+  const $div4 = document.createElement('div');
+  $ldsRing.append($div4);
+  return $ringWrapper;
 }
 const $iconHome = document.querySelector('.fa-house');
 $iconHome.addEventListener('click', () => {
@@ -203,7 +219,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const trailer = await getTrailer(data.game);
     if (trailer) $trailerImg.setAttribute('src', trailer.trailerImg);
   } else if (data.view === 'home') {
-    $filterIcon.style.display = 'none';
+    $filterIcon.className = 'fa-solid fa-lg hidden';
   }
 });
 const $searchBar = document.querySelector('#search-bar');
@@ -270,14 +286,19 @@ $searchIcon?.addEventListener('click', async () => {
 });
 async function getGame(game) {
   try {
+    $gameDescriptionContainer.prepend(renderLoading());
+    const $ldsRingWrapper = document.querySelector('.lds-ring-wrapper');
     const response = await fetch(
       `https://api.rawg.io/api/games/${game}?key=721b55f2e5094e67aea26d3b8bc35d43`,
     );
     if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
     const result = await response.json();
+    $ldsRingWrapper?.remove();
     return result;
   } catch (error) {
     console.error(error);
+    const $ldsRingWrapper = document.querySelector('.lds-ring-wrapper');
+    $ldsRingWrapper?.remove();
   }
 }
 async function searchGameByInput(game) {
