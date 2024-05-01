@@ -86,7 +86,7 @@ function viewSwap(view) {
       data.game = null;
       data.platform = null;
       $filterBar.className = 'hidden';
-      $filterIcon.style.display = 'none';
+      $filterIcon.className = 'fa-solid fa-lg hidden';
       break;
     case 'genres':
       $genres.classList.remove('hidden');
@@ -95,7 +95,7 @@ function viewSwap(view) {
       $header.textContent = 'Genres';
       data.game = null;
       $filterBar.classList.remove('hidden');
-      $filterIcon.style.display = 'inline-block';
+      $filterIcon.className = 'fa-solid fa-filter fa-lg';
       break;
     case 'game':
       $game.classList.remove('hidden');
@@ -105,20 +105,25 @@ function viewSwap(view) {
       data.genres = null;
       data.platform = null;
       $filterBar.className = 'hidden';
-      $filterIcon.style.display = 'none';
+      $filterIcon.className = 'fa-solid fa-lg hidden';
       break;
   }
 }
 async function getGenres(genres) {
   try {
+    $flexGenres.prepend(renderLoading());
+    const $ldsRingWrapper = document.querySelector('.lds-ring-wrapper');
     const response = await fetch(
       `https://api.rawg.io/api/games?key=721b55f2e5094e67aea26d3b8bc35d43&genres=${genres}`,
     );
     if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
     const data = await response.json();
     const arrayOfGenres = data.results;
+    $ldsRingWrapper?.remove();
     return arrayOfGenres;
   } catch (error) {
+    const $ldsRingWrapper = document.querySelector('.lds-ring-wrapper');
+    $ldsRingWrapper?.remove();
     console.error(error);
   }
 }
@@ -140,6 +145,22 @@ function renderGame(game) {
   $gameImgText.append($p);
   return $colSix;
 }
+function renderLoading() {
+  const $ringWrapper = document.createElement('div');
+  $ringWrapper.className = 'lds-ring-wrapper';
+  const $ldsRing = document.createElement('div');
+  $ldsRing.className = 'lds-ring';
+  $ringWrapper.append($ldsRing);
+  const $div1 = document.createElement('div');
+  $ldsRing.append($div1);
+  const $div2 = document.createElement('div');
+  $ldsRing.append($div2);
+  const $div3 = document.createElement('div');
+  $ldsRing.append($div3);
+  const $div4 = document.createElement('div');
+  $ldsRing.append($div4);
+  return $ringWrapper;
+}
 const $iconHome = document.querySelector('.fa-house');
 $iconHome.addEventListener('click', () => {
   const $colSixGenres = document.querySelectorAll('.col-six-genres');
@@ -160,11 +181,14 @@ $iconHome.addEventListener('click', () => {
 document.addEventListener('DOMContentLoaded', async () => {
   if (data.genres !== null && data.platform !== null) {
     viewSwap('genres');
+    $flexGenres.prepend(renderLoading());
+    const $ldsRingWrapper = document.querySelector('.lds-ring-wrapper');
     const genresByPlatformResults = await getGenresByPlatform(data.platform);
     const $colSixGenres = document.querySelectorAll('.col-six-genres');
     $colSixGenres.forEach((element) => {
       element.remove();
     });
+    $ldsRingWrapper?.remove();
     genresByPlatformResults.forEach((result) => {
       $flexGenres.prepend(renderGame(result));
     });
@@ -196,14 +220,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   } else if (data.game !== null) {
     viewSwap('game');
+    $gameDescriptionContainer.prepend(renderLoading());
+    const $ldsRingWrapper = document.querySelector('.lds-ring-wrapper');
     const gameResult = await searchGameByInput(data.game);
     $header.textContent = gameResult.name;
+    $ldsRingWrapper?.remove();
     $gameDescriptionContainer.prepend(renderGamePage(gameResult));
     const $trailerImg = document.querySelector('.trailer');
     const trailer = await getTrailer(data.game);
     if (trailer) $trailerImg.setAttribute('src', trailer.trailerImg);
   } else if (data.view === 'home') {
-    $filterIcon.style.display = 'none';
+    $filterIcon.className = 'fa-solid fa-lg hidden';
   }
 });
 const $searchBar = document.querySelector('#search-bar');
@@ -270,18 +297,25 @@ $searchIcon?.addEventListener('click', async () => {
 });
 async function getGame(game) {
   try {
+    $gameDescriptionContainer.prepend(renderLoading());
+    const $ldsRingWrapper = document.querySelector('.lds-ring-wrapper');
     const response = await fetch(
       `https://api.rawg.io/api/games/${game}?key=721b55f2e5094e67aea26d3b8bc35d43`,
     );
     if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
     const result = await response.json();
+    $ldsRingWrapper?.remove();
     return result;
   } catch (error) {
     console.error(error);
+    const $ldsRingWrapper = document.querySelector('.lds-ring-wrapper');
+    $ldsRingWrapper?.remove();
   }
 }
 async function searchGameByInput(game) {
   try {
+    $gameDescriptionContainer.prepend(renderLoading());
+    const $ldsRingWrapper = document.querySelector('.lds-ring-wrapper');
     const response = await fetch(
       `https://api.rawg.io/api/games/${game}?key=721b55f2e5094e67aea26d3b8bc35d43`,
     );
@@ -290,8 +324,11 @@ async function searchGameByInput(game) {
       data.view = 'home';
     }
     const result = await response.json();
+    $ldsRingWrapper?.remove();
     return result;
   } catch (error) {
+    const $ldsRingWrapper = document.querySelector('.lds-ring-wrapper');
+    $ldsRingWrapper?.remove();
     console.error(error);
   }
 }
@@ -400,6 +437,8 @@ $gameDescriptionContainer?.addEventListener('click', async (event) => {
 });
 async function getGenresByPlatform(platform) {
   try {
+    $flexGenres.prepend(renderLoading());
+    const $ldsRingWrapper = document.querySelector('.lds-ring-wrapper');
     let parentPlatform;
     switch (platform.toLowerCase()) {
       case 'pc':
@@ -424,8 +463,11 @@ async function getGenresByPlatform(platform) {
     if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
     const result = await response.json();
     const arrayOfGenres = result.results;
+    $ldsRingWrapper?.remove();
     return arrayOfGenres;
   } catch (error) {
+    const $ldsRingWrapper = document.querySelector('.lds-ring-wrapper');
+    $ldsRingWrapper?.remove();
     console.error(error);
   }
 }
