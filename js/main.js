@@ -111,14 +111,19 @@ function viewSwap(view) {
 }
 async function getGenres(genres) {
   try {
+    $flexGenres.prepend(renderLoading());
+    const $ldsRingWrapper = document.querySelector('.lds-ring-wrapper');
     const response = await fetch(
       `https://api.rawg.io/api/games?key=721b55f2e5094e67aea26d3b8bc35d43&genres=${genres}`,
     );
     if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
     const data = await response.json();
     const arrayOfGenres = data.results;
+    $ldsRingWrapper?.remove();
     return arrayOfGenres;
   } catch (error) {
+    const $ldsRingWrapper = document.querySelector('.lds-ring-wrapper');
+    $ldsRingWrapper?.remove();
     console.error(error);
   }
 }
@@ -176,11 +181,14 @@ $iconHome.addEventListener('click', () => {
 document.addEventListener('DOMContentLoaded', async () => {
   if (data.genres !== null && data.platform !== null) {
     viewSwap('genres');
+    $flexGenres.prepend(renderLoading());
+    const $ldsRingWrapper = document.querySelector('.lds-ring-wrapper');
     const genresByPlatformResults = await getGenresByPlatform(data.platform);
     const $colSixGenres = document.querySelectorAll('.col-six-genres');
     $colSixGenres.forEach((element) => {
       element.remove();
     });
+    $ldsRingWrapper?.remove();
     genresByPlatformResults.forEach((result) => {
       $flexGenres.prepend(renderGame(result));
     });
@@ -212,8 +220,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   } else if (data.game !== null) {
     viewSwap('game');
+    $gameDescriptionContainer.prepend(renderLoading());
+    const $ldsRingWrapper = document.querySelector('.lds-ring-wrapper');
     const gameResult = await searchGameByInput(data.game);
     $header.textContent = gameResult.name;
+    $ldsRingWrapper?.remove();
     $gameDescriptionContainer.prepend(renderGamePage(gameResult));
     const $trailerImg = document.querySelector('.trailer');
     const trailer = await getTrailer(data.game);
@@ -303,6 +314,8 @@ async function getGame(game) {
 }
 async function searchGameByInput(game) {
   try {
+    $gameDescriptionContainer.prepend(renderLoading());
+    const $ldsRingWrapper = document.querySelector('.lds-ring-wrapper');
     const response = await fetch(
       `https://api.rawg.io/api/games/${game}?key=721b55f2e5094e67aea26d3b8bc35d43`,
     );
@@ -311,8 +324,11 @@ async function searchGameByInput(game) {
       data.view = 'home';
     }
     const result = await response.json();
+    $ldsRingWrapper?.remove();
     return result;
   } catch (error) {
+    const $ldsRingWrapper = document.querySelector('.lds-ring-wrapper');
+    $ldsRingWrapper?.remove();
     console.error(error);
   }
 }
@@ -421,6 +437,8 @@ $gameDescriptionContainer?.addEventListener('click', async (event) => {
 });
 async function getGenresByPlatform(platform) {
   try {
+    $flexGenres.prepend(renderLoading());
+    const $ldsRingWrapper = document.querySelector('.lds-ring-wrapper');
     let parentPlatform;
     switch (platform.toLowerCase()) {
       case 'pc':
@@ -445,8 +463,11 @@ async function getGenresByPlatform(platform) {
     if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
     const result = await response.json();
     const arrayOfGenres = result.results;
+    $ldsRingWrapper?.remove();
     return arrayOfGenres;
   } catch (error) {
+    const $ldsRingWrapper = document.querySelector('.lds-ring-wrapper');
+    $ldsRingWrapper?.remove();
     console.error(error);
   }
 }
